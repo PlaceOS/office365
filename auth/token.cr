@@ -18,7 +18,7 @@ module Office365
     end
 
     private def expires_at
-      @created_at + Time::Span.new(0, 0, @expires_in)
+      @created_at + @expires_in.seconds
     end
   end
 end
