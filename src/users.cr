@@ -1,6 +1,17 @@
 module Office365
   module Users
 
+
+    def get_user(id : String)
+      response = graph_request(request_method: "GET", path: "/v1.0/users/#{id}")
+
+      if response.success?
+        User.from_json response.body
+      else
+        raise "error fetching user #{response.status} (#{response.status_code}\n#{response.body}"
+      end
+    end
+
     def get_users(q : String? = nil, limit : Int32? = nil)
       if q 
         queries = q.split(" ")
