@@ -1,6 +1,3 @@
-require "json"
-require "./email_address"
-
 module Office365
   class Contact
     include JSON::Serializable

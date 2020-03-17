@@ -1,10 +1,12 @@
-require "connect-proxy"
-require "./token"
+require "./users"
 
 module Office365
+  class Client
 
-  class Auth
+    include Office365::Users
+
     LOGIN_URI    = URI.parse("https://login.microsoftonline.com")
+    GRAPH_URI    = URI.parse("https://graph.microsoft.com/")
     TOKENS_CACHE = {} of String => Token
 
     def initialize(@tenant : String, @client_id : String, @client_secret : String, @scope : String = "https://graph.microsoft.com/.default")
@@ -34,8 +36,41 @@ module Office365
       end
     end
 
+    private def graph_request(
+      request_method : String, 
+      path : String, 
+      data : String? = nil, 
+      query : Hash(String, String)?= nil, 
+      headers : HTTP::Headers = default_headers
+    )
+
+      if query
+        path = "#{path}?#{query.map{|k,v| HTTP::Params.parse("#{k}=#{v}")}.join("&")}"
+      end
+
+      ConnectProxy::HTTPClient.new(GRAPH_URI) do |client|
+        client.exec(
+          request_method,
+          path,
+          headers
+        )
+      end
+
+    end
+
+    private def default_headers
+      HTTP::Headers {
+        "Authorization" => "Bearer #{access_token}"
+      }
+    end
+
+    private def access_token
+      get_token.access_token
+    end
+
     private def token_lookup
       "#{@tenant}_#{@client_id}"
     end
   end
+
 end

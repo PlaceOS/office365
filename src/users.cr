@@ -1,25 +1,26 @@
-require "connect-proxy"
-require "../auth/auth"
-require "./user_query"
-
 module Office365
-  class Users
-    GRAPH_URI = URI.parse("https://graph.microsoft.com/")
+  module Users
 
+    def get_users(q : String? = nil, limit : Int32? = nil)
+      if q 
+        queries = q.split(" ")
+        filter_params = [] of String
 
-    def initialize(@auth : Office365::Auth)
-    end
+        queries.each do |q|
+          filter_params << "(startswith(displayName,'#{q}') or startswith(givenName,'#{q}') or startswith(surname,'#{q}') or startswith(mail,'#{q}'))"
+        end
 
-    def list
-      response = ConnectProxy::HTTPClient.new(GRAPH_URI) do |client|
-        client.exec(
-          "GET",
-          "/v1.0/users",
-          HTTP::Headers {
-            "Authorization" => "Bearer #{get_token}"
-          }
-        )
+        filter_param = "(accountEnabled eq true) and #{filter_params.join(" and ")}"
+      else
+        filter_param = "accountEnabled eq true"
       end
+
+      query_params = {
+        "$filter" => filter_param,
+        "$top"    => limit
+      }.compact
+
+      response = graph_request("GET", "/v1.0/users", query: query_params)
 
       if response.success?
         UserQuery.from_json response.body
@@ -28,8 +29,5 @@ module Office365
       end
     end
 
-    private def get_token
-      @auth.get_token.access_token
-    end
   end
 end

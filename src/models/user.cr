@@ -1,6 +1,3 @@
-require "json"
-require "../contacts/contact"
-
 module Office365
   class User
     include JSON::Serializable
