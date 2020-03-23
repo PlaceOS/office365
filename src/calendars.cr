@@ -5,6 +5,12 @@ module Office365::Calendars
       "$top" => "#{limit}"
     }
 
+    if match
+      query_params["$filter"] = "name eq '#{match.gsub("'", "''")}'"
+    elsif search
+      query_params["$filter"] = "startswith(name,'#{search.gsub("'", "''")}')"
+    end
+
     case calendar_group_id
     when nil
       endpoint = "/v1.0/users/#{mailbox}/calendars"
@@ -65,10 +71,34 @@ module Office365::Calendars
     end
   end
 
-  def delete_calendar(mailbox, id, calendargroup_id)
+  def delete_calendar(mailbox : String, id : String, calendar_group_id : String? = nil)
+    case calendar_group_id
+    when nil
+      endpoint = "/v1.0/users/#{mailbox}/calendars/#{id}"
+    when "default"
+      endpoint = "/v1.0/users/#{mailbox}/calendarGroup/calendars/#{id}"
+    else
+      endpoint = "/v1.0/users/#{mailbox}/calendarGroups/#{calendar_group_id}/calendars/#{id}"
+    end
+
+    response = graph_request(request_method: "DELETE", path: endpoint)
+
+    if response.success?
+      true
+    else
+      raise "error deleting calendar #{response.status} (#{response.status_code}\n#{response.body}"
+    end
   end
 
-  def delete_calendargroup(mailbox, id)
+  def delete_calendar_group(mailbox : String, id : String)
+    endpoint = "/v1.0/users/#{mailbox}/calendarGroups/#{id}"
+    response = graph_request(request_method: "DELETE", path: endpoint)
+
+    if response.success?
+      true
+    else
+      raise "error deleting calendar group #{response.status} (#{response.status_code}\n#{response.body}"
+    end
   end
 
 end
