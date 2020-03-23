@@ -1,9 +1,11 @@
 require "./users"
+require "./calendars"
 
 module Office365
   class Client
 
     include Office365::Users
+    include Office365::Calendars
 
     LOGIN_URI    = URI.parse("https://login.microsoftonline.com")
     GRAPH_URI    = URI.parse("https://graph.microsoft.com/")
@@ -40,7 +42,7 @@ module Office365
       request_method : String, 
       path : String, 
       data : String? = nil, 
-      query : Hash(String, String)?= nil, 
+      query : Hash(String, String)? = nil, 
       headers : HTTP::Headers = default_headers
     )
 
@@ -50,9 +52,10 @@ module Office365
 
       ConnectProxy::HTTPClient.new(GRAPH_URI) do |client|
         client.exec(
-          request_method,
-          path,
-          headers
+          method: request_method,
+          path: path,
+          headers: headers,
+          body: data
         )
       end
 
@@ -60,7 +63,8 @@ module Office365
 
     private def default_headers
       HTTP::Headers {
-        "Authorization" => "Bearer #{access_token}"
+        "Authorization" => "Bearer #{access_token}",
+        "Content-type" => "application/json"
       }
     end
 
