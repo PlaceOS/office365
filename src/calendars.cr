@@ -1,9 +1,11 @@
 module Office365::Calendars
 
-  def list_calendars(mailbox : String, calendar_group_id : String? = nil, match : String? = nil, search : String? = nil, limit : Int32 = 99)
-    query_params = {
-      "$top" => "#{limit}"
-    }
+  def list_calendars(mailbox : String, calendar_group_id : String? = nil, match : String? = nil, search : String? = nil, limit : Int32? = nil)
+    query_params = {} of String => String
+
+    if limit
+      query_params["$top"] = "#{limit}"
+    end
 
     if match
       query_params["$filter"] = "name eq '#{match.gsub("'", "''")}'"
