@@ -1,6 +1,27 @@
-class Office365::Attendee
-  include JSON::Serializable
+module Office365
+  enum AttendeeType
+    Required
+    Optional
+    Resource
 
-  property type : String
-  property emailAddress : EmailAddress
+    def to_json(json : JSON::Builder)
+      json.string(to_s.downcase)
+    end
+  end
+
+  class Attendee
+    include JSON::Serializable
+
+    property type : AttendeeType?
+    property emailAddress : EmailAddress?
+
+    def initialize(email : EmailAddress | String, @type = AttendeeType::Required)
+      case email
+      when String
+        @emailAddress = EmailAddress.new(email)
+      when EmailAddress
+        @emailAddress = email
+      end
+    end
+  end
 end

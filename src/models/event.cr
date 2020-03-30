@@ -1,25 +1,64 @@
-class Office365::Calendar
-  include JSON::Serializable
+module Office365
+  enum FreeBusyStatus
+    Free
+    Tentative
+    Busy
+    Oof
+    WorkingElsewhere
+    Uknown
 
-  property id : String
-  property start : Time
-  property end : Time
-  property subject : String
-  property body : ItemBody
-  property attendees : Array(Attendee)
-  property iCalUId : String
-  property showAs : String
-  property isCancelled : Bool
-  property isAllDay : Bool
-  property sensitivity : String
-  property location : Location
-  property locations : Array(Location)
-  property recurrence : PatternedRecurrence
-  property seriesMasterId : String
-  property type : String
-  property createdDateTime : Time
-  property changeKey : String
-  property lastModifiedDateTime : Time
-  property originalStartTimeZone : String
-  property originalEndTimeZone : String
+    def to_json(json : JSON::Builder)
+      json.string(to_s.downcase)
+    end
+  end
+
+  enum Sensitivity
+    Normal
+    Personal
+    Private
+    Confidential
+
+    def to_json(json : JSON::Builder)
+      json.string(to_s.downcase)
+    end
+  end
+
+  class Event
+    include JSON::Serializable
+
+    property id : String?
+    property showAs : FreeBusyStatus = FreeBusyStatus::Busy
+    property responseRequested : Bool = true
+    property subject : String = "Meeting"
+    property attendees : Array(Attendee) = [] of Office365::Attendee
+    property sensitivity : Sensitivity = Sensitivity::Normal
+    property body : ItemBody = ItemBody.new
+    property start : DateTimeTimeZone? = DateTimeTimeZone.new
+    property end : DateTimeTimeZone? = DateTimeTimeZone.new(Time.local + 1.hour)
+    property organizer : Recipient?
+    property locations : Array(Location) = [] of Location
+    property recurrence : PatternedRecurrence?
+    property iCalUId : String?
+
+    def initialize
+    end
+
+    def description
+      @body.content
+    end
+
+    def description=(value : String)
+      @body.content = value
+    end
+
+    def is_private?
+      @sensitivity == "private"
+    end
+
+    def is_private(value : Bool)
+      @sensitivity = value ? "private" : "normal"
+    end
+
+  end
 end
+
