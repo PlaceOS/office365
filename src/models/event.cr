@@ -32,9 +32,16 @@ module Office365
     @[JSON::Field(key: "end")]
     property ends_at : DateTimeTimeZone?
 
+    @[JSON::Field(key: "iCalUId")]
+    property icaluid : String?
+
+    @[JSON::Field(key: "showAs")]
+    property show_as : FreeBusyStatus
+
+    @[JSON::Field(key: "responseRequested")]
+    property? response_requested : Bool
+
     property id : String?
-    property iCalUId : String?
-    property showAs : FreeBusyStatus
     property subject : String?
     property attendees : Array(Attendee) = [] of Office365::Attendee
     property sensitivity : Sensitivity
@@ -42,13 +49,12 @@ module Office365
     property organizer : Recipient?
     property locations : Array(Location)?
     property recurrence : PatternedRecurrence?
-    property? responseRequested : Bool
 
     def initialize(
       starts_at : DateTimeTimeZone | Time = Time.local,
       ends_at : DateTimeTimeZone | Time = Time.local + 1.hour,
-      @showAs = FreeBusyStatus::Busy,
-      @responseRequested = true,
+      @show_as = FreeBusyStatus::Busy,
+      @response_requested = true,
       @subject = "Meeting",
       attendees : Array(Attendee | EmailAddress | String) = [] of Attendee | EmailAddress | String,
       @sensitivity = Sensitivity::Normal,
@@ -78,7 +84,7 @@ module Office365
       if typeof(location) == String
         @locations = [Location.new(displayName: location)]
       else
-        @locations = @attendees.map {|a| Location.new(displayName: a.name) if a.type == AttendeeType::Resource }.compact
+        @locations = @attendees.map { |a| Location.new(displayName: a.name) if a.type == AttendeeType::Resource }.compact
       end
 
       case organizer
@@ -98,7 +104,7 @@ module Office365
     end
 
     def rooms
-      @attendees.select {|a| a.type == AttendeeType::Resource }
+      @attendees.select { |a| a.type == AttendeeType::Resource }
     end
 
     def is_private?
@@ -108,7 +114,5 @@ module Office365
     def is_private=(value : Bool)
       @sensitivity = value ? Sensitivity::Private : Sensitivity::Normal
     end
-
   end
 end
-

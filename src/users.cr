@@ -1,5 +1,4 @@
 module Office365::Users
-
   def get_user(id : String)
     response = graph_request(request_method: "GET", path: "/v1.0/users/#{id}")
 
@@ -11,12 +10,12 @@ module Office365::Users
   end
 
   def list_users(q : String? = nil, limit : Int32? = nil)
-    if q 
+    if q
       queries = q.split(" ")
       filter_params = [] of String
 
-      queries.each do |q|
-        filter_params << "(startswith(displayName,'#{q}') or startswith(givenName,'#{q}') or startswith(surname,'#{q}') or startswith(mail,'#{q}'))"
+      queries.each do |query|
+        filter_params << "(startswith(displayName,'#{query}') or startswith(givenName,'#{query}') or startswith(surname,'#{query}') or startswith(mail,'#{query}'))"
       end
 
       filter_param = "(accountEnabled eq true) and #{filter_params.join(" and ")}"
@@ -26,7 +25,7 @@ module Office365::Users
 
     query_params = {
       "$filter" => filter_param,
-      "$top"    => limit
+      "$top"    => limit,
     }.compact
 
     response = graph_request("GET", "/v1.0/users", query: query_params)
@@ -37,5 +36,4 @@ module Office365::Users
       raise "error fetching users list #{response.status} (#{response.status_code}\n#{response.body}"
     end
   end
-
 end

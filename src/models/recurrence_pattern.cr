@@ -41,9 +41,15 @@ module Office365
   class RecurrencePattern
     include JSON::Serializable
 
-    property dayOfMonth : Int32?
-    property daysOfWeek : Array(DayOfWeek)?
-    property firstDayOfWeek : DayOfWeek?
+    @[JSON::Field(key: "dayOfMonth")]
+    property day_of_month : Int32?
+
+    @[JSON::Field(key: "daysOfWeek")]
+    property days_of_week : Array(DayOfWeek)?
+
+    @[JSON::Field(key: "firstDayOfWeek")]
+    property first_day_of_week : DayOfWeek?
+
     property index : WeekIndex?
     property interval : Int32?
     property month : Int32?

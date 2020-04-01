@@ -13,18 +13,19 @@ module Office365
     include JSON::Serializable
 
     property type : AttendeeType
-    property emailAddress : EmailAddress
 
-    delegate name, to: @emailAddress
+    @[JSON::Field(key: "emailAddress")]
+    property email_address : EmailAddress
+
+    delegate name, to: @email_address
 
     def initialize(email : EmailAddress | String, @type = AttendeeType::Required)
       case email
       when String
-        @emailAddress = EmailAddress.new(email)
+        @email_address = EmailAddress.new(email)
       else
-        @emailAddress = email
+        @email_address = email
       end
     end
-
   end
 end

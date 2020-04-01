@@ -4,7 +4,6 @@ require "./events"
 
 module Office365
   class Client
-
     include Office365::Users
     include Office365::Calendars
     include Office365::Events
@@ -24,8 +23,8 @@ module Office365
         client.exec(
           "POST",
           "/#{@tenant}/oauth2/v2.0/token",
-          HTTP::Headers {
-            "Content-Type" => "application/x-www-form-urlencoded"
+          HTTP::Headers{
+            "Content-Type" => "application/x-www-form-urlencoded",
           },
           "client_id=#{@client_id}&scope=#{URI.encode(@scope)}&client_secret=#{@client_secret}&grant_type=client_credentials"
         )
@@ -41,15 +40,14 @@ module Office365
     end
 
     private def graph_request(
-      request_method : String, 
-      path : String, 
-      data : String? = nil, 
-      query : Hash(String, String)? = nil, 
+      request_method : String,
+      path : String,
+      data : String? = nil,
+      query : Hash(String, String)? = nil,
       headers : HTTP::Headers = default_headers
     )
-
       if query
-        path = "#{path}?#{query.map{|k,v| HTTP::Params.parse("#{k}=#{v}")}.join("&")}"
+        path = "#{path}?#{query.map { |k, v| HTTP::Params.parse("#{k}=#{v}") }.join("&")}"
       end
 
       ConnectProxy::HTTPClient.new(GRAPH_URI) do |client|
@@ -60,13 +58,12 @@ module Office365
           body: data
         )
       end
-
     end
 
     private def default_headers
-      HTTP::Headers {
+      HTTP::Headers{
         "Authorization" => "Bearer #{access_token}",
-        "Content-type" => "application/json"
+        "Content-type"  => "application/json",
       }
     end
 
@@ -78,5 +75,4 @@ module Office365
       "#{@tenant}_#{@client_id}"
     end
   end
-
 end

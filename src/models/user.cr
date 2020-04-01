@@ -3,12 +3,16 @@ module Office365
     include JSON::Serializable
 
     property id : String
-    property mobilePhone : String?
-    property displayName : String?
     property mail : String?
-    property jobTitle : String?
-
     property contacts : Array(Contact)?
 
+    @[JSON::Field(key: "mobilePhone")]
+    property mobile_phone : String?
+
+    @[JSON::Field(key: "displayName")]
+    property display_name : String?
+
+    @[JSON::Field(key: "jobTitle")]
+    property job_title : String?
   end
 end

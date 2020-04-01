@@ -1,5 +1,4 @@
 module Office365::Calendars
-
   def list_calendars(mailbox : String, calendar_group_id : String? = nil, match : String? = nil, search : String? = nil, limit : Int32? = nil)
     query_params = {} of String => String
 
@@ -17,9 +16,9 @@ module Office365::Calendars
     when nil
       endpoint = "/v1.0/users/#{mailbox}/calendars"
     when "default"
-      endpoint = "/v1.0/users/#{mailbox}/calendarGroup/calendars" 
+      endpoint = "/v1.0/users/#{mailbox}/calendarGroup/calendars"
     else
-      endpoint = "/v1.0/users/#{mailbox}/calendarGroups/#{calendar_group_id}/calendars" 
+      endpoint = "/v1.0/users/#{mailbox}/calendarGroups/#{calendar_group_id}/calendars"
     end
 
     response = graph_request(request_method: "GET", path: endpoint, query: query_params)
@@ -30,9 +29,8 @@ module Office365::Calendars
     end
   end
 
-
   def list_calendar_groups(mailbox : String, limit : Int32 = 99)
-    query_params = { "$top" => "#{limit}" }
+    query_params = {"$top" => "#{limit}"}
     endpoint = "/v1.0/users/#{mailbox}/calendarGroups"
     response = graph_request(request_method: "GET", path: endpoint, query: query_params)
 
@@ -102,6 +100,4 @@ module Office365::Calendars
       raise "error deleting calendar group #{response.status} (#{response.status_code}\n#{response.body}"
     end
   end
-
 end
-
