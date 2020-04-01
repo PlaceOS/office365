@@ -82,9 +82,9 @@ module Office365
       end
 
       if typeof(location) == String
-        @locations = [Location.new(displayName: location)]
+        @locations = [Location.new(display_name: location)]
       else
-        @locations = @attendees.map { |a| Location.new(displayName: a.name) if a.type == AttendeeType::Resource }.compact
+        @locations = @attendees.map { |a| Location.new(display_name: a.name) if a.type == AttendeeType::Resource }.compact
       end
 
       case organizer
