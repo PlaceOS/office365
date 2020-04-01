@@ -8,4 +8,7 @@ class Office365::Location
   property locationType : String?
   property uniqueIdType : String?
   property uniqueId : String?
+
+  def initialize(@displayName)
+  end
 end

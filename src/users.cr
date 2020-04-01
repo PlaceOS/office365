@@ -10,7 +10,7 @@ module Office365::Users
     end
   end
 
-  def get_users(q : String? = nil, limit : Int32? = nil)
+  def list_users(q : String? = nil, limit : Int32? = nil)
     if q 
       queries = q.split(" ")
       filter_params = [] of String

@@ -1,9 +1,9 @@
 class Office365::ItemBody
   include JSON::Serializable
 
-  property content : String = ""
-  property contentType : String = "HTML"
+  property content
+  property contentType
 
-  def initialize
+  def initialize(@content = "", @contentType = "HTML")
   end
 end

@@ -12,16 +12,19 @@ module Office365
   class Attendee
     include JSON::Serializable
 
-    property type : AttendeeType?
-    property emailAddress : EmailAddress?
+    property type : AttendeeType
+    property emailAddress : EmailAddress
+
+    delegate name, to: @emailAddress
 
     def initialize(email : EmailAddress | String, @type = AttendeeType::Required)
       case email
       when String
         @emailAddress = EmailAddress.new(email)
-      when EmailAddress
+      else
         @emailAddress = email
       end
     end
+
   end
 end

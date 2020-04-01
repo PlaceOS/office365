@@ -26,21 +26,67 @@ module Office365
   class Event
     include JSON::Serializable
 
-    property id : String?
-    property showAs : FreeBusyStatus = FreeBusyStatus::Busy
-    property responseRequested : Bool = true
-    property subject : String = "Meeting"
-    property attendees : Array(Attendee) = [] of Office365::Attendee
-    property sensitivity : Sensitivity = Sensitivity::Normal
-    property body : ItemBody = ItemBody.new
-    property start : DateTimeTimeZone? = DateTimeTimeZone.new
-    property end : DateTimeTimeZone? = DateTimeTimeZone.new(Time.local + 1.hour)
-    property organizer : Recipient?
-    property locations : Array(Location) = [] of Location
-    property recurrence : PatternedRecurrence?
-    property iCalUId : String?
+    @[JSON::Field(key: "start")]
+    property starts_at : DateTimeTimeZone?
 
-    def initialize
+    @[JSON::Field(key: "end")]
+    property ends_at : DateTimeTimeZone?
+
+    property id : String?
+    property iCalUId : String?
+    property showAs : FreeBusyStatus
+    property subject : String?
+    property attendees : Array(Attendee) = [] of Office365::Attendee
+    property sensitivity : Sensitivity
+    property body : ItemBody?
+    property organizer : Recipient?
+    property locations : Array(Location)?
+    property recurrence : PatternedRecurrence?
+    property? responseRequested : Bool
+
+    def initialize(
+      starts_at : DateTimeTimeZone | Time = Time.local,
+      ends_at : DateTimeTimeZone | Time = Time.local + 1.hour,
+      @showAs = FreeBusyStatus::Busy,
+      @responseRequested = true,
+      @subject = "Meeting",
+      attendees : Array(Attendee | EmailAddress | String) = [] of Attendee | EmailAddress | String,
+      @sensitivity = Sensitivity::Normal,
+      description : String = "",
+      organizer : Recipient | EmailAddress | String | Nil = nil,
+      location : String? = nil,
+      @recurrence = nil,
+      rooms : Array(String | EmailAddress) = [] of String | EmailAddress
+    )
+      @starts_at = DateTimeTimeZone.convert(starts_at)
+      @ends_at = DateTimeTimeZone.convert(ends_at)
+      @body = ItemBody.new(description)
+
+      attendees.each do |attendee|
+        case attendee
+        when String, EmailAddress
+          @attendees << Attendee.new(attendee)
+        when Attendee
+          @attendees << attendee
+        end
+      end
+
+      rooms.each do |room|
+        @attendees << Attendee.new(room, AttendeeType::Resource)
+      end
+
+      if typeof(location) == String
+        @locations = [Location.new(displayName: location)]
+      else
+        @locations = @attendees.map {|a| Location.new(displayName: a.name) if a.type == AttendeeType::Resource }.compact
+      end
+
+      case organizer
+      when Recipient
+        @organizer = organizer
+      when String, EmailAddress
+        @organizer = Recipient.new(organizer)
+      end
     end
 
     def description
@@ -51,12 +97,16 @@ module Office365
       @body.content = value
     end
 
-    def is_private?
-      @sensitivity == "private"
+    def rooms
+      @attendees.select {|a| a.type == AttendeeType::Resource }
     end
 
-    def is_private(value : Bool)
-      @sensitivity = value ? "private" : "normal"
+    def is_private?
+      @sensitivity == Sensitivity::Private
+    end
+
+    def is_private=(value : Bool)
+      @sensitivity = value ? Sensitivity::Private : Sensitivity::Normal
     end
 
   end

@@ -9,4 +9,13 @@ class Office365::DateTimeTimeZone
     @dateTime = value.in(Time::Location.load(tz))
     @timeZone = tz
   end
+
+  def self.convert(value : Time | DateTimeTimeZone) : DateTimeTimeZone
+    case value
+    when Time
+      DateTimeTimeZone.new(value)
+    else
+      value
+    end
+  end
 end

@@ -5,7 +5,7 @@ module Office365
     property id : String
     property mobilePhone : String?
     property displayName : String?
-    property mail : String
+    property mail : String?
     property jobTitle : String?
 
     property contacts : Array(Contact)?
