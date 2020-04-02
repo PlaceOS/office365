@@ -1,25 +1,28 @@
 [![Build Status](https://travis-ci.com/PlaceOS/google.svg?branch=master)](https://travis-ci.com/PlaceOS/google)
 
-# google
+# office365
 
-Provides ability to interact with google services.
-
-Currently supports following:
+Implements the Microsoft Office365 Graph API for the follow
 
 * OAuth Token Generation
   - By providing credentials via argument
-  - By providing absolute path to `client_auth.json` file
-* Directory API
-  - List
-  - Single user fetch
+* User
+  - list Users
+  - get User
 * Calendar
-  - CalendarList
-  - Listing calendar events
-  - Single calendar event fetch
-  - Create calendar event
-  - Delete calendar event
-  - Update calendar event
-  - Move calendar event
+  - list Calendars
+  - list Calendar Groups
+  - create Calendar
+  - create Calendar Group
+  - delete Calendar
+  - delete Calendar Group
+* Events
+  - list Events
+  - create Event
+  - get Event
+  - update Event
+  - delete Event
+
 
 ## Installation
 
@@ -28,7 +31,7 @@ Currently supports following:
    ```yaml
    dependencies:
      google:
-       github: PlaceOS/google
+       github: PlaceOS/office365
    ```
 
 2. Run `shards install`
@@ -36,63 +39,133 @@ Currently supports following:
 ## Usage
 
 ```crystal
-require "google"
+require "office365"
 ```
 
-### Auth comes in two flavors
+### Authentication
 
-#### Google::Auth
+#### Office365::Client
 
 ```crystal
-Google::Auth.new(issuer: "test@example.com", signing_key: PRIVATE_KEY, scopes: "https://www.googleapis.com/auth/admin.directory.user.readonly", sub: "admin@example.com")
+client = Office365::Client.new(
+  tenant: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  client_id: "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  client_secret: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+)
 ```
 
-#### Google::FileAuth
+### Users
 
 ```crystal
-Google::FileAuth.new(file_path = "/absolute_path/client_auth.json", scopes: "https://www.googleapis.com/auth/admin.directory.user.readonly", sub: "admin@example.com")
+# id can be either user id, or email
+user = client.get_user(id: "foo@bar.com)
+
+# get all users
+users = client.list_users
+
+# get top 25 users
+users = client.list_users(limit: 25)
+
+# get top 100 users whose email or display name starts with "foo"
+users = client.list_users(q: "foo", limit: 100)
 ```
 
-### Directory
+### Calendars
 
 ```crystal
-# auth variable below can be instance of Google::Auth or Google::FileAuth
-directory = Google::Directory.new(auth: auth, domain: "example.com")
+# fetch all foo@bar.com's calendars
+calendars = client.list_calendars(mailbox: "foo@bar.com")
 
-# To fetch all users
-directory.users
+# fetch all foo@bar.com's calendar from default calendar group
+calendars = client.list_calendars(mailbox: "foo@bar.com", calendar_group_id: "default")
 
-# Fetch single user
-directory.lookup("test@example.com")
+# fetch all foo@bar.com's calendars from a specific calendar group id
+calendars = client.list_calendars(mailbox: "foo@bar.com", calendar_group_id: "xxxx-xxxx...")
+
+# fetch foo@bar.com's calendars whose name exactly matches "garys calendar"
+calendars = client.list_calendars(mailbox: "foo@bar.com", match: "garys calendar")
+
+# fetch foo@bar.com's calendars whose name starts with "gary"
+calendars = client.list_calendars(mailbox: "foo@bar.com", search: "gary")
+
+# fetch all foo@bars calendar groups, limit is optional
+groups = client.list_calendar_groups(mailbox: "foo@bar.com", limit: 25)
+
+# create a new calendar, returns an Office365::Calendar objectj
+calendar = client.create(
+  mailbox: "foo@bar.com",    # required
+  name: "My New Calendar",   # required
+  calendar_group_id: "..."   # optional
+)
+
+# create a calendar group
+group = client.create_calendar_group(mailbox: "foo@bar.com", name: "A Whole New Calendar Group!")
+
+# deleting a calendar
+client.delete_calendar(
+  mailbox: "foo@bar.com",  # required
+  id: "...",               # required
+  calendar_group_id: "..." # optional
+)
+
+# deleting a calendar group
+client.delete_calendar_group(
+  mailbox: "foo@bar.com",  # required
+  id: "...",               # required
+)
 ```
 
-### Calendar
-
+### Events
 ```crystal
-# auth variable below can be instance of Google::Auth or Google::FileAuth
-calendar = Google::Calendar.new(auth: auth)
+# list events, returns Office365::EventQuery
+list = client.list_events(
+  mailbox: "foo@bar.com",   # required
+  calendar_id: "...",       # optional
+  calendar_group_id: "..."  # optional
+)
 
-# To fetch calendar list
-calendar.calendar_list
+# create an event
+event = client.create_event(
+  mailbox: "foo@bar.com",
+  starts_at: Time.local,
+  ends_at: Time.local + 30.minutes,
+  calendar_id: "...",
+  calendar_group_id: "...",
+  subject: "My Meeting",
+  description: "A description of my meeting",
 
-# To fetch all calendar events
-calendar.events
+  # attendee's can be either a string, EmailAddress, or Attendee
+  attendees[
+    "string@email.com",
+    EmailAddress.new("David Bowie", "david@bowie.net"),
+    Attendee.new(
+      email: "d.trump@whitehouse.gov",
+      type: Office365::AttendeeType::Optional
+    )
+  ],
 
-# To fetch single calendar event by id
-calendar.event("event_id")
+  # adds an attendee of type AttendeeType::Resource
+  location: "The Red Room",
+  sensitivity: Office365::Sensitivity::Normal,
 
-# To create calendar event
-calendar.create(event_start: Time.utc, event_end: Time.utc + 1.hour, attendees: ["test@example.com"], summary: "ACA test event", description: "test description")
+  # adds attendees of type AttendeeType::Resource, string or email address will work
+  rooms:[
+    "string@email.com",
+    EmailAddress.new("David Bowie", "david@bowie.net"),
+  ]
+)
 
-# To update single calendar event by id
-calendar.update("event_id", summary: "updated summary")
+# get an event
+event = client.get_event(mailbox: "foo@bar.com", id: "...")
 
-# To delete single calendar event by id
-calendar.delete("event_id")
+# update an event
+event.description = "Updated: Something new" 
+updated_event = client.update_event(event: event, mailbox: "foo@bar.com")
 
-# To move single calendar event by id
-calendar.move(event_id: "event_id", calendar_id: "original_calendar_id", destination_id: "destination_calendar_id")
+# delete event
+client.delete_event(mailbox: "foo@bar.com", id: "...")
 ```
+
 
 ## Development
 
