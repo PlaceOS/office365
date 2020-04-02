@@ -66,6 +66,4 @@ describe Office365::Calendars do
       client.delete_calendar_group(mailbox: "foo@bar.com", id: "1234").should eq(true)
     end
   end
-
 end
-

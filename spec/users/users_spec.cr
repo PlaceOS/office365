@@ -23,4 +23,3 @@ describe Office365::Users do
     end
   end
 end
-

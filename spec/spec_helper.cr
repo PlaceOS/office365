@@ -80,12 +80,48 @@ module SpecHelper
     WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendarGroups/1234").to_return(body: "")
   end
 
+  def mock_event_data
+    {
+      starts_at: Time.local,
+      ends_at:   Time.local + 30.minutes,
+      subject:   "My Unique Event Subject",
+      rooms:     ["Red Room"],
+      attendees: ["elon@musk.com", Office365::EmailAddress.new(address: "david@bowie.net", name: "David Bowie"), Office365::Attendee.new(email: "the@goodies.org")],
+    }
+  end
+
+  def mock_event
+    Office365::Event.new(**mock_event_data)
+  end
+
+  def mock_event_query
+    Office365::EventQuery.new(value: [mock_event])
+  end
+
+  def mock_list_events
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events?%24top=10").to_return(mock_event_query.to_json)
+  end
+
+  def mock_create_event
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events").to_return(mock_event.to_json)
+  end
+
+  def mock_get_event
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234").to_return(mock_event.to_json)
+  end
+
+  def mock_update_event
+    WebMock.stub(:patch, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/").to_return(Office365::Event.new(**mock_event_data.merge(subject: "A Whole New Name!")).to_json)
+  end
+
+  def mock_delete_event
+    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234").to_return(body: "")
+  end
+
   def mock_credentials
     {tenant: "tentant", client_id: "client_id", client_secret: "client_secret"}
   end
 end
-
-
 
 Spec.before_each do
   WebMock.reset
