@@ -17,6 +17,9 @@ module Office365
       Time.utc > expires_at
     end
 
+    def initialize(@access_token, @token_type, @expires_in)
+    end
+
     private def expires_at
       @created_at + @expires_in.seconds
     end
