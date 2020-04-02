@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/PlaceOS/google.svg?branch=master)](https://travis-ci.com/PlaceOS/google)
+[![Build Status](https://travis-ci.com/PlaceOS/office365.svg?branch=master)](https://travis-ci.com/PlaceOS/office365)
 
 # office365
 
