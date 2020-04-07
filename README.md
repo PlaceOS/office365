@@ -30,7 +30,7 @@ Implements the Microsoft Office365 Graph API for the follow
 
    ```yaml
    dependencies:
-     google:
+     office365:
        github: PlaceOS/office365
    ```
 
