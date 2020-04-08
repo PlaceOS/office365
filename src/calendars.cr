@@ -1,5 +1,5 @@
 module Office365::Calendars
-  def list_calendars(mailbox : String, calendar_group_id : String? = nil, match : String? = nil, search : String? = nil, limit : Int32? = nil)
+  def list_calendars(mailbox : String?, calendar_group_id : String? = nil, match : String? = nil, search : String? = nil, limit : Int32? = nil)
     query_params = {} of String => String
 
     if limit
@@ -12,10 +12,12 @@ module Office365::Calendars
       query_params["$filter"] = "startswith(name,'#{search.gsub("'", "''")}')"
     end
 
-    case calendar_group_id
-    when nil
+    case {mailbox, calendar_group_id}
+    when {nil, nil}
+      endpoint = "/v1.0/me/calendars"
+    when {String, nil}
       endpoint = "/v1.0/users/#{mailbox}/calendars"
-    when "default"
+    when {String, "default"}
       endpoint = "/v1.0/users/#{mailbox}/calendarGroup/calendars"
     else
       endpoint = "/v1.0/users/#{mailbox}/calendarGroups/#{calendar_group_id}/calendars"
@@ -29,9 +31,16 @@ module Office365::Calendars
     end
   end
 
-  def list_calendar_groups(mailbox : String, limit : Int32 = 99)
+  def list_calendar_groups(mailbox : String?, limit : Int32 = 99)
     query_params = {"$top" => "#{limit}"}
-    endpoint = "/v1.0/users/#{mailbox}/calendarGroups"
+
+    case mailbox
+    when nil
+      endpoint = "/v1.0/me/calendarGroups"
+    else
+      endpoint = "/v1.0/users/#{mailbox}/calendarGroups"
+    end
+
     response = graph_request(request_method: "GET", path: endpoint, query: query_params)
 
     if response.success?
