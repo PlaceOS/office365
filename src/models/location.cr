@@ -7,19 +7,15 @@ class Office365::Location
   property display_name : String?
 
   @[JSON::Field(key: "locationEmailAddress")]
-  property location_email_address : String?
+  property email_address : String?
 
   @[JSON::Field(key: "locationUri")]
-  property location_uri : String?
+  property uri : String?
 
   @[JSON::Field(key: "locationType")]
-  property location_type : String?
+  property type : String? = "default"
 
-  @[JSON::Field(key: "uniqueIdType")]
-  property unique_id_type : String?
-
-  @[JSON::Field(key: "uniqueId")]
-  property unique_id : String?
+  property coordinates : OutlookGeoCoordinates?
 
   def initialize(@display_name)
   end

@@ -43,7 +43,7 @@ describe Office365::Calendars do
 
       client = Office365::Client.new(**SpecHelper.mock_credentials)
       calendar = client.create_calendar_group(mailbox: "foo@bar.com", name: "I Love Calendar Groups")
-      calendar.is_a?(Office365::CalendarGroup)
+      calendar.should be_a(Office365::CalendarGroup)
     end
   end
 

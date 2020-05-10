@@ -41,6 +41,9 @@ module Office365
     @[JSON::Field(key: "responseRequested")]
     property? response_requested : Bool
 
+    @[JSON::Field(key: "isAllDay")]
+    property? all_day : Bool
+
     property id : String?
     property subject : String?
     property attendees : Array(Attendee) = [] of Office365::Attendee
@@ -52,20 +55,21 @@ module Office365
 
     def initialize(
       starts_at : DateTimeTimeZone | Time = Time.local,
-      ends_at : DateTimeTimeZone | Time = Time.local + 1.hour,
+      ends_at : DateTimeTimeZone | Time | Nil = nil,
       @show_as = FreeBusyStatus::Busy,
       @response_requested = true,
       @subject = "Meeting",
-      attendees : Array(Attendee | EmailAddress | String) = [] of Attendee | EmailAddress | String,
+      attendees : Array(Office365::Attendee | EmailAddress | String) = [] of Office365::Attendee | EmailAddress | String,
       @sensitivity = Sensitivity::Normal,
-      description : String = "",
+      description : String? = "",
       organizer : Recipient | EmailAddress | String | Nil = nil,
       location : String? = nil,
       @recurrence = nil,
-      rooms : Array(String | EmailAddress) = [] of String | EmailAddress
+      rooms : Array(String | EmailAddress) = [] of String | EmailAddress,
+      @all_day = false
     )
       @starts_at = DateTimeTimeZone.convert(starts_at)
-      @ends_at = DateTimeTimeZone.convert(ends_at)
+      @ends_at = !ends_at.nil? ? DateTimeTimeZone.convert(ends_at) : nil
       @body = ItemBody.new(description)
 
       attendees.each do |attendee|
@@ -96,11 +100,11 @@ module Office365
     end
 
     def description
-      @body.content
+      @body.try &.content
     end
 
-    def description=(value : String)
-      @body.content = value
+    def description=(value : String?)
+      @body = ItemBody.new(content: value)
     end
 
     def rooms
