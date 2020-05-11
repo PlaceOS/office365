@@ -52,6 +52,7 @@ module Office365
     property organizer : Recipient?
     property locations : Array(Location)?
     property recurrence : PatternedRecurrence?
+    property timezone : String
 
     def initialize(
       starts_at : DateTimeTimeZone | Time = Time.local,
@@ -68,6 +69,7 @@ module Office365
       rooms : Array(String | EmailAddress) = [] of String | EmailAddress,
       @all_day = false
     )
+      @timezone = DateTimeTimeZone.extract_tz(starts_at)
       @starts_at = DateTimeTimeZone.convert(starts_at)
       @ends_at = !ends_at.nil? ? DateTimeTimeZone.convert(ends_at) : nil
       @body = ItemBody.new(description)
@@ -117,6 +119,19 @@ module Office365
 
     def is_private=(value : Bool)
       @sensitivity = value ? Sensitivity::Private : Sensitivity::Normal
+    end
+
+    def self.from_json(data)
+      parsed_data = JSON.parse(data).as_h
+      parsed_data.merge!({"timezone" => parsed_data["originalStartTimeZone"]})
+      returned_event = super(parsed_data.to_json)
+      returned_event.convert_to_original_tz
+    end
+
+    def convert_to_original_tz
+      @starts_at = !starts_at.nil? ? DateTimeTimeZone.new(starts_at.not_nil!, timezone) : nil
+      @ends_at = !ends_at.nil? ? DateTimeTimeZone.new(ends_at.not_nil!, timezone) : nil
+      self
     end
   end
 end

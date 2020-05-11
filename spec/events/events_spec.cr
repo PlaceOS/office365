@@ -13,7 +13,7 @@ describe Office365::Events do
     end
   end
 
-  describe "#create_event" do
+  describe "#create_event UTC" do
     it "suceeds when everything goes well" do
       SpecHelper.mock_client_auth
       SpecHelper.mock_create_event
@@ -24,7 +24,20 @@ describe Office365::Events do
     end
   end
 
-  describe "#get_event" do
+  describe "#create_event with tz" do
+    it "suceeds when everything goes well" do
+      SpecHelper.mock_client_auth
+      SpecHelper.mock_create_event_tz
+
+      client = Office365::Client.new(**SpecHelper.mock_credentials)
+      event = client.create_event(**SpecHelper.mock_event_data.merge({mailbox: "foo@bar.com"}))
+      event.timezone.should eq(SpecHelper.mock_tz)
+      event.starts_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
+      event.ends_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
+    end
+  end
+
+  describe "#get_event UTC" do
     it "suceeds when everything goes well" do
       SpecHelper.mock_client_auth
       SpecHelper.mock_get_event
@@ -35,7 +48,20 @@ describe Office365::Events do
     end
   end
 
-  describe "#update_event" do
+  describe "#get_event with tz" do
+    it "suceeds when everything goes well" do
+      SpecHelper.mock_client_auth
+      SpecHelper.mock_get_event_tz
+
+      client = Office365::Client.new(**SpecHelper.mock_credentials)
+      event = client.get_event(id: "1234", mailbox: "foo@bar.com")
+      event.timezone.should eq(SpecHelper.mock_tz)
+      event.starts_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
+      event.ends_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
+    end
+  end
+
+  describe "#update_event UTC" do
     it "suceeds when everything goes well" do
       SpecHelper.mock_client_auth
       SpecHelper.mock_update_event
@@ -45,6 +71,21 @@ describe Office365::Events do
       event.subject = "A Whole New Name!"
       updated_event = client.update_event(event: event, mailbox: "foo@bar.com")
       event.subject.should eq(updated_event.subject)
+    end
+  end
+
+  describe "#update_event with tz" do
+    it "suceeds when everything goes well" do
+      SpecHelper.mock_client_auth
+      SpecHelper.mock_update_event_tz
+
+      client = Office365::Client.new(**SpecHelper.mock_credentials)
+      event = SpecHelper.mock_event_tz
+      event.subject = "A Whole New Name!"
+      updated_event = client.update_event(event: event, mailbox: "foo@bar.com")
+      event.timezone.should eq(SpecHelper.mock_tz)
+      event.starts_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
+      event.ends_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
     end
   end
 
