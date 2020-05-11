@@ -90,28 +90,66 @@ module SpecHelper
     }
   end
 
+  def mock_tz
+    "America/New_York"
+  end
+
+  def mock_event_data_tz
+    location = Time::Location.load(mock_tz)
+    {
+      starts_at: Time.local(location: location),
+      ends_at:   Time.local(location: location) + 30.minutes,
+      subject:   "My Unique Event Subject",
+      rooms:     ["Red Room"],
+      attendees: ["elon@musk.com", Office365::EmailAddress.new(address: "david@bowie.net", name: "David Bowie"), Office365::Attendee.new(email: "the@goodies.org")],
+    }
+  end
+
+  def with_tz(event, tz : String = "UTC")
+    event_response = JSON.parse(event).as_h
+    event_response.merge({"originalStartTimeZone" => tz}).to_json
+  end
+
   def mock_event
     Office365::Event.new(**mock_event_data)
   end
 
-  def mock_event_query
-    Office365::EventQuery.new(value: [mock_event])
+  def mock_event_tz
+    Office365::Event.new(**mock_event_data_tz)
+  end
+
+  def mock_event_query_json
+    {
+       "value" => [JSON.parse(with_tz(mock_event.to_json))]
+    }.to_json
   end
 
   def mock_list_events
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events?%24top=100").to_return(mock_event_query.to_json)
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events?%24top=100").to_return(mock_event_query_json)
   end
 
   def mock_create_event
-    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events").to_return(mock_event.to_json)
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events").to_return(with_tz(mock_event.to_json))
+  end
+
+  def mock_create_event_tz
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events").to_return(with_tz(mock_event_tz.to_json, mock_tz))
   end
 
   def mock_get_event
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234").to_return(mock_event.to_json)
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234").to_return(with_tz(mock_event.to_json))
+  end
+
+  def mock_get_event_tz
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234").to_return(with_tz(mock_event_tz.to_json, mock_tz))
   end
 
   def mock_update_event
-    WebMock.stub(:patch, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/").to_return(Office365::Event.new(**mock_event_data.merge(subject: "A Whole New Name!")).to_json)
+    WebMock.stub(:patch, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/").to_return(with_tz(Office365::Event.new(**mock_event_data.merge(subject: "A Whole New Name!")).to_json))
+  end
+
+  def mock_update_event_tz
+    WebMock.stub(:patch, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/").to_return(with_tz(Office365::Event.new(**mock_event_data_tz.merge(subject: "A Whole New Name!")).to_json, mock_tz))
   end
 
   def mock_delete_event

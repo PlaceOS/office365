@@ -127,8 +127,8 @@ list = client.list_events(
 # create an event
 event = client.create_event(
   mailbox: "foo@bar.com",
-  starts_at: Time.local,
-  ends_at: Time.local + 30.minutes,
+  starts_at: Time.local(location: Time::Location.build("Australia/Sydney")),
+  ends_at: Time.local(location: Time::Location.build("Australia/Sydney")) + 30.minutes,
   calendar_id: "...",
   calendar_group_id: "...",
   subject: "My Meeting",
@@ -159,7 +159,7 @@ event = client.create_event(
 event = client.get_event(mailbox: "foo@bar.com", id: "...")
 
 # update an event
-event.description = "Updated: Something new" 
+event.description = "Updated: Something new"
 updated_event = client.update_event(event: event, mailbox: "foo@bar.com")
 
 # delete event
