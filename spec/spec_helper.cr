@@ -165,7 +165,7 @@ module SpecHelper
       id: "123",
       name: "test.txt",
       contentType: "text/plain",
-      contentBytes: "SGVsbG8gd29ybGQ=",
+      contentBytes: "aGVsbG8gd29ybGQ=",
       "@odata.type": "#microsoft.graph.fileAttachment",
       "isInline": false,
       size: 217
@@ -174,7 +174,7 @@ module SpecHelper
 
   def mock_attachment_query_json
     {
-      "value" => [mock_attachment]
+      "value" => [mock_attachment_data]
     }.to_json
   end
 

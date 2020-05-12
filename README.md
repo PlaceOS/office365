@@ -186,7 +186,7 @@ attachment = client.create_attachment(
   mailbox: "foo@bar.com",
   event_id: "1234",
   name: "test.txt",
-  content_bytes: "SGVsbG8gd29ybGQ=" # Base64 encoded contents of file
+  content_bytes: "hello worlds" # file contents as string
 )
 
 # get an attachment

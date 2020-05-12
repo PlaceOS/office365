@@ -10,6 +10,7 @@ describe Office365::Attachments do
       list = client.list_attachments(mailbox: "foo@bar.com", event_id: "1234")
       list.value.size.should eq(1)
       list.value.first.name.should eq(SpecHelper.mock_attachment.name)
+      list.value.first.content_bytes.should eq("hello world")
     end
   end
 
@@ -22,8 +23,9 @@ describe Office365::Attachments do
       attachment = client.create_attachment(mailbox: "foo@bar.com",
         event_id: "1234",
         name: "test.txt",
-        content_bytes: "SGVsbG8gd29ybGQ=")
+        content_bytes: "hello world")
       attachment.name.should eq(SpecHelper.mock_attachment.name)
+      attachment.content_bytes.should eq("hello world")
     end
   end
 
@@ -35,6 +37,7 @@ describe Office365::Attachments do
       client = Office365::Client.new(**SpecHelper.mock_credentials)
       attachment = client.get_attachment(id: "1234", event_id: "1234", mailbox: "foo@bar.com")
       attachment.name.should eq(SpecHelper.mock_attachment.name)
+      attachment.content_bytes.should eq("hello world")
     end
   end
 
