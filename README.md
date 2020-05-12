@@ -22,6 +22,11 @@ Implements the Microsoft Office365 Graph API for the follow
   - get Event
   - update Event
   - delete Event
+* Attachments
+  - list Attachments
+  - create Attachment
+  - get Attachment
+  - delete Attachment
 
 
 ## Installation
@@ -166,6 +171,30 @@ updated_event = client.update_event(event: event, mailbox: "foo@bar.com")
 client.delete_event(mailbox: "foo@bar.com", id: "...")
 ```
 
+### Attachments
+```crystal
+# list attachments, returns Office365::AttachmentQuery
+list = client.list_attachments(
+  mailbox: "foo@bar.com",   # required
+  event_id: "1234",         # required
+  calendar_id: "...",       # optional
+  calendar_group_id: "..."  # optional
+)
+
+# create an attachment for an event
+attachment = client.create_attachment(
+  mailbox: "foo@bar.com",
+  event_id: "1234",
+  name: "test.txt",
+  content_bytes: "SGVsbG8gd29ybGQ=" # Base64 encoded contents of file
+)
+
+# get an attachment
+attachment = client.get_attachment(mailbox: "foo@bar.com", event_id: "1234", id: "...")
+
+# delete attachment
+client.delete_attachment(mailbox: "foo@bar.com", event_id: "1234", id: "...")
+```
 
 ## Development
 

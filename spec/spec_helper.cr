@@ -159,6 +159,44 @@ module SpecHelper
   def mock_credentials
     {tenant: "tentant", client_id: "client_id", client_secret: "client_secret"}
   end
+
+  def mock_attachment_data
+    {
+      id: "123",
+      name: "test.txt",
+      contentType: "text/plain",
+      contentBytes: "SGVsbG8gd29ybGQ=",
+      "@odata.type": "#microsoft.graph.fileAttachment",
+      "isInline": false,
+      size: 217
+    }
+  end
+
+  def mock_attachment_query_json
+    {
+      "value" => [mock_attachment]
+    }.to_json
+  end
+
+  def mock_attachment
+    Office365::Attachment.from_json(mock_attachment_data.to_json)
+  end
+
+  def mock_list_attachments
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234/attachments?%24top=100").to_return(mock_attachment_query_json)
+  end
+
+  def mock_create_attachment
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234/attachments").to_return(mock_attachment_data.to_json)
+  end
+
+  def mock_get_attachment
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234/attachments/1234").to_return(mock_attachment_data.to_json)
+  end
+
+  def mock_delete_attachment
+    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234/attachments/1234").to_return(body: "")
+  end
 end
 
 Spec.before_each do
