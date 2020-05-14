@@ -51,6 +51,7 @@ module Office365
     property body : ItemBody?
     property organizer : Recipient?
     property locations : Array(Location)?
+    property location : Location?
     property recurrence : PatternedRecurrence?
     property timezone : String
 
@@ -67,7 +68,8 @@ module Office365
       location : String? = nil,
       @recurrence = nil,
       rooms : Array(String | EmailAddress) = [] of String | EmailAddress,
-      @all_day = false
+      @all_day = false,
+      @id = nil
     )
       @timezone = DateTimeTimeZone.extract_tz(starts_at)
       @starts_at = DateTimeTimeZone.convert(starts_at)
