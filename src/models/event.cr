@@ -53,7 +53,10 @@ module Office365
     property locations : Array(Location)?
     property location : Location?
     property recurrence : PatternedRecurrence?
-    property timezone : String
+
+    @[JSON::Field(key: "originalStartTimeZone")]
+    property timezone : String = ""
+
 
     def initialize(
       starts_at : DateTimeTimeZone | Time = Time.local,
@@ -121,13 +124,6 @@ module Office365
 
     def is_private=(value : Bool)
       @sensitivity = value ? Sensitivity::Private : Sensitivity::Normal
-    end
-
-    def self.from_json(data)
-      parsed_data = JSON.parse(data).as_h
-      parsed_data.merge!({"timezone" => parsed_data["originalStartTimeZone"]})
-      returned_event = super(parsed_data.to_json)
-      returned_event.convert_to_original_tz
     end
 
     def convert_to_original_tz
