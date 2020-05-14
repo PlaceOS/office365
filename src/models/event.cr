@@ -125,11 +125,5 @@ module Office365
     def is_private=(value : Bool)
       @sensitivity = value ? Sensitivity::Private : Sensitivity::Normal
     end
-
-    def convert_to_original_tz
-      @starts_at = !starts_at.nil? ? DateTimeTimeZone.new(starts_at.not_nil!, timezone) : nil
-      @ends_at = !ends_at.nil? ? DateTimeTimeZone.new(ends_at.not_nil!, timezone) : nil
-      self
-    end
   end
 end
