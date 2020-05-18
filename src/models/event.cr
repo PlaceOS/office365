@@ -26,11 +26,11 @@ module Office365
   class Event
     include JSON::Serializable
 
-    @[JSON::Field(key: "start")]
-    property starts_at : DateTimeTimeZone?
+    @[JSON::Field(key: "start", converter: Office365::DateTimeTimeZone)]
+    property starts_at : Time?
 
-    @[JSON::Field(key: "end")]
-    property ends_at : DateTimeTimeZone?
+    @[JSON::Field(key: "end", converter: Office365::DateTimeTimeZone)]
+    property ends_at : Time?
 
     @[JSON::Field(key: "iCalUId")]
     property icaluid : String?
@@ -57,10 +57,9 @@ module Office365
     @[JSON::Field(key: "originalStartTimeZone")]
     property timezone : String = ""
 
-
     def initialize(
-      starts_at : DateTimeTimeZone | Time = Time.local,
-      ends_at : DateTimeTimeZone | Time | Nil = nil,
+      @starts_at : Time = Time.local,
+      @ends_at : Time | Nil = nil,
       @show_as = FreeBusyStatus::Busy,
       @response_requested = true,
       @subject = "Meeting",
@@ -74,9 +73,6 @@ module Office365
       @all_day = false,
       @id = nil
     )
-      @timezone = DateTimeTimeZone.extract_tz(starts_at)
-      @starts_at = DateTimeTimeZone.convert(starts_at)
-      @ends_at = !ends_at.nil? ? DateTimeTimeZone.convert(ends_at) : nil
       @body = ItemBody.new(description)
 
       attendees.each do |attendee|

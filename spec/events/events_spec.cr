@@ -32,8 +32,8 @@ describe Office365::Events do
       client = Office365::Client.new(**SpecHelper.mock_credentials)
       event = client.create_event(**SpecHelper.mock_event_data.merge({mailbox: "foo@bar.com"}))
       event.timezone.should eq(SpecHelper.mock_tz)
-      event.starts_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
-      event.ends_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
+      event.starts_at.not_nil!.location.to_s.should eq(SpecHelper.mock_tz)
+      event.ends_at.not_nil!.location.to_s.should eq(SpecHelper.mock_tz)
     end
   end
 
@@ -56,8 +56,8 @@ describe Office365::Events do
       client = Office365::Client.new(**SpecHelper.mock_credentials)
       event = client.get_event(id: "1234", mailbox: "foo@bar.com")
       event.timezone.should eq(SpecHelper.mock_tz)
-      event.starts_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
-      event.ends_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
+      event.starts_at.not_nil!.location.to_s.should eq(SpecHelper.mock_tz)
+      event.ends_at.not_nil!.location.to_s.should eq(SpecHelper.mock_tz)
     end
   end
 
@@ -83,9 +83,9 @@ describe Office365::Events do
       event = SpecHelper.mock_event_tz
       event.subject = "A Whole New Name!"
       updated_event = client.update_event(event: event, mailbox: "foo@bar.com")
-      event.timezone.should eq(SpecHelper.mock_tz)
-      event.starts_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
-      event.ends_at.not_nil!.time_zone.should eq(SpecHelper.mock_tz)
+      updated_event.timezone.should eq(SpecHelper.mock_tz)
+      updated_event.starts_at.not_nil!.location.to_s.should eq(SpecHelper.mock_tz)
+      updated_event.ends_at.not_nil!.location.to_s.should eq(SpecHelper.mock_tz)
     end
   end
 

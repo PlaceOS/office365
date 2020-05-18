@@ -1,32 +1,34 @@
-class Office365::DateTimeTimeZone
-  include JSON::Serializable
+module Office365::DateTimeTimeZone
+  extend self
 
-  @[JSON::Field(key: "dateTime", converter: ::Time::Format.new("%FT%R"), emit_null: true)]
-  property date_time : Time
-
-  @[JSON::Field(key: "timeZone")]
-  property time_zone : String
-
-  def initialize(value : Time = Time.utc, tz : String = "UTC")
-    @date_time = value.in(tz_location(tz))
-    @time_zone = tz
-  end
-
-  def initialize(value : DateTimeTimeZone, tz : String)
-    @date_time = value.date_time.in(tz_location(tz))
-    @time_zone = tz
-  end
-
-  def self.convert(value : Time | DateTimeTimeZone) : DateTimeTimeZone
-    case value
-    when Time
-      DateTimeTimeZone.new(value, extract_tz(value))
-    else
-      value
+  def to_json(value, json : JSON::Builder)
+    json.object do
+      json.field("dateTime", value.to_s("%FT%R"))
+      json.field("timeZone", extract_tz(value))
     end
   end
 
-  def self.extract_tz(value : Time)
+  def from_json(pull : JSON::PullParser)
+    value = nil
+    timezone = nil
+
+    pull.read_object do |key, key_location|
+      case key
+      when "dateTime"
+        value = pull.read_string
+      when "timeZone"
+        timezone = pull.read_string
+      end
+    end
+
+    if !timezone.nil? && !value.nil?
+      Time.parse(value, "%FT%R", tz_location(timezone))
+    else
+      raise "Couldn't parse DateTimeTimeZone"
+    end
+  end
+
+  def extract_tz(value : Time)
     tz = value.location.to_s
     case tz
     when "Local"
@@ -36,7 +38,7 @@ class Office365::DateTimeTimeZone
     end
   end
 
-  private def tz_location(tz : String)
+  def tz_location(tz : String)
     loc = WindowsToTzdata.translate(tz)
 
     loc ? Time::Location.load(loc) : Time::Location.load(tz)
