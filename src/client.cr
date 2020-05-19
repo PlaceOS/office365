@@ -1,12 +1,14 @@
 require "./users"
 require "./calendars"
 require "./events"
+require "./attachments"
 
 module Office365
   class Client
     include Office365::Users
     include Office365::Calendars
     include Office365::Events
+    include Office365::Attachments
 
     LOGIN_URI    = URI.parse("https://login.microsoftonline.com")
     GRAPH_URI    = URI.parse("https://graph.microsoft.com/")
