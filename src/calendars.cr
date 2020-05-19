@@ -109,4 +109,19 @@ module Office365::Calendars
       raise "error deleting calendar group #{response.status} (#{response.status_code}\n#{response.body}"
     end
   end
+
+  def get_availability(mailbox : String, mailboxes : Array(String), starts_at : Time, ends_at : Time)
+    endpoint = "/v1.0/users/#{mailbox}/calendar/getSchedule"
+    data = {"schedules" => mailboxes,
+            "startTime" => DateTimeTimeZone.convert(starts_at),
+            "endTime"   => DateTimeTimeZone.convert(ends_at)}.to_json
+
+    response = graph_request(request_method: "POST", path: endpoint, data: data)
+
+    if response.success?
+      AvailabilityQuery.from_json(response.body).value
+    else
+      raise "error fetching calendar group #{response.status} (#{response.status_code}\n#{response.body}"
+    end
+  end
 end

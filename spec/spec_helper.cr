@@ -80,6 +80,34 @@ module SpecHelper
     WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendarGroups/1234").to_return(body: "")
   end
 
+  def mock_get_availability
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/getSchedule")
+      .to_return(mock_availability.to_json)
+  end
+
+  def mock_availability
+    {
+      "value" => [
+        {
+          "scheduleId"    => "foo@bar.com",
+          "scheduleItems" => [
+            {
+              "status" => "busy",
+              "start"  => {
+                "dateTime" => "2020-05-10T23:49:00.0000000",
+                "timeZone" => "UTC",
+              },
+              "end" => {
+                "dateTime" => "2020-05-11T00:49:00.0000000",
+                "timeZone" => "UTC",
+              },
+            },
+          ],
+        },
+      ],
+    }
+  end
+
   def mock_event_data
     {
       starts_at: Time.local,
@@ -120,7 +148,7 @@ module SpecHelper
 
   def mock_event_query_json
     {
-       "value" => [JSON.parse(with_tz(mock_event.to_json))]
+      "value" => [JSON.parse(with_tz(mock_event.to_json))],
     }.to_json
   end
 

@@ -66,4 +66,20 @@ describe Office365::Calendars do
       client.delete_calendar_group(mailbox: "foo@bar.com", id: "1234").should eq(true)
     end
   end
+
+  describe "#get_availability" do
+    it "suceeds when everything goes well" do
+      SpecHelper.mock_client_auth
+      SpecHelper.mock_get_availability
+
+      client = Office365::Client.new(**SpecHelper.mock_credentials)
+      availability = client.get_availability(mailbox: "foo@bar.com",
+        mailboxes: ["foo@bar.com", "foo@baz.com"],
+        starts_at: Time.local,
+        ends_at: Time.local + 1.hour)
+
+      typeof(availability).should eq(Array(Office365::AvailabilitySchedule))
+      availability.first.calendar.should eq("foo@bar.com")
+    end
+  end
 end

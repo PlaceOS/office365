@@ -16,6 +16,7 @@ Implements the Microsoft Office365 Graph API for the follow
   - create Calendar Group
   - delete Calendar
   - delete Calendar Group
+  - availability
 * Events
   - list Events
   - create Event
@@ -117,6 +118,14 @@ client.delete_calendar(
 client.delete_calendar_group(
   mailbox: "foo@bar.com",  # required
   id: "...",               # required
+)
+
+# fetching availability for a list of calendars
+client.get_availability(
+  mailbox: "foo@bar.com",  # required
+  mailboxes: ["foo@bar.com", "bar@buzz.com"], # required
+  starts_at: Time.local(location: Time::Location.build("Australia/Sydney")), # required query time starting from
+  ends_at: Time.local(location: Time::Location.build("Australia/Sydney")) + 30.minutes, # required query time ending at
 )
 ```
 
