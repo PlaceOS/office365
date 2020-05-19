@@ -153,7 +153,7 @@ module SpecHelper
   end
 
   def mock_list_events
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events?%24top=100").to_return(mock_event_query_json)
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events?%24filter=start%2FdateTime+ge+%272020-01-01T00%3A00%27&%24top=100").to_return(mock_event_query_json)
   end
 
   def mock_create_event

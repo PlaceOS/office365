@@ -1,8 +1,24 @@
 module Office365::Events
-  def list_events(mailbox : String, calendar_group_id : String? = nil, calendar_id : String? = nil, query_params : Hash(String, String) = {} of String => String)
+  def list_events(
+    mailbox : String, 
+    calendar_group_id : String? = nil, 
+    calendar_id : String? = nil, 
+    period_start : Time = Time.local.at_beginning_of_day,
+    period_end : Time? = nil,
+    limit : Int32 = 100,
+    query_params : Hash(String, String) = {} of String => String
+  )
     endpoint = calendar_event_path(mailbox, calendar_group_id, calendar_id)
 
-    response = graph_request(request_method: "GET", path: endpoint, query: {"$top" => "100"})
+    if period_end
+      query_params["$filter"] = "start/dateTime ge '#{period_start.to_utc.to_s("%FT%R")}' and start/dateTime lt '#{period_end.to_utc.to_s("%FT%R")}'"
+    else
+      query_params["$filter"] = "start/dateTime ge '#{period_start.to_utc.to_s("%FT%R")}'"
+    end
+
+    query_params["$top"] = "#{limit}"
+
+    response = graph_request(request_method: "GET", path: endpoint, query: query_params)
 
     if response.success?
       EventQuery.from_json response.body
