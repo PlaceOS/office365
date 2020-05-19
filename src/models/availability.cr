@@ -15,11 +15,11 @@ module Office365
   class Availability
     include JSON::Serializable
 
-    @[JSON::Field(key: "start")]
-    property starts_at : DateTimeTimeZone?
+    @[JSON::Field(key: "start", converter: Office365::DateTimeTimeZone)]
+    property starts_at : Time?
 
-    @[JSON::Field(key: "end")]
-    property ends_at : DateTimeTimeZone?
+    @[JSON::Field(key: "end", converter: Office365::DateTimeTimeZone)]
+    property ends_at : Time?
 
     property status : AvailabilityStatus
 

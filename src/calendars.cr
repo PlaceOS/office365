@@ -113,8 +113,8 @@ module Office365::Calendars
   def get_availability(mailbox : String, mailboxes : Array(String), starts_at : Time, ends_at : Time)
     endpoint = "/v1.0/users/#{mailbox}/calendar/getSchedule"
     data = {"schedules" => mailboxes,
-            "startTime" => DateTimeTimeZone.convert(starts_at),
-            "endTime"   => DateTimeTimeZone.convert(ends_at)}.to_json
+            "startTime" => starts_at,
+            "endTime"   => ends_at}.to_json
 
     response = graph_request(request_method: "POST", path: endpoint, data: data)
 
