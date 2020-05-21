@@ -160,6 +160,11 @@ event = client.create_event(
 
   # adds an attendee of type AttendeeType::Resource
   location: "The Red Room",
+
+  # adds recurrence
+  recurrence: {type: "daily", end: Time.local("Australia/Sydney").at_beginning_of_day + 6.days},
+
+  # specify sensitivity
   sensitivity: Office365::Sensitivity::Normal,
 
   # adds attendees of type AttendeeType::Resource, string or email address will work
@@ -173,7 +178,8 @@ event = client.create_event(
 event = client.get_event(mailbox: "foo@bar.com", id: "...")
 
 # update an event
-event.description = "Updated: Something new"
+event.description = "Updated: Something new" # update description
+event.set_recurrence(recurrence: {type: "daily", end: Time.local("Australia/Sydney").at_beginning_of_day + 6.days}) # update recurrence
 updated_event = client.update_event(event: event, mailbox: "foo@bar.com")
 
 # delete event

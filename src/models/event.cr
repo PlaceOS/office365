@@ -68,7 +68,7 @@ module Office365
       description : String? = "",
       organizer : Recipient | EmailAddress | String | Nil = nil,
       location : String? = nil,
-      @recurrence = nil,
+      recurrence : NamedTuple(type: String, end: Time)? = nil,
       rooms : Array(String | EmailAddress) = [] of String | EmailAddress,
       @all_day = false,
       @id = nil
@@ -92,6 +92,10 @@ module Office365
         @locations = [Location.new(display_name: location)]
       else
         @locations = @attendees.map { |a| Location.new(display_name: a.name) if a.type == AttendeeType::Resource }.compact
+      end
+
+      if recurrence
+        set_recurrence(recurrence)
       end
 
       case organizer
@@ -120,6 +124,12 @@ module Office365
 
     def is_private=(value : Bool)
       @sensitivity = value ? Sensitivity::Private : Sensitivity::Normal
+    end
+
+    def set_recurrence(recurrence : NamedTuple(type: String, end: Time)?)
+      @recurrence = PatternedRecurrence.build(type: Office365::RecurrencePatternType.parse(recurrence[:type]),
+                                              recurrence_start_date: @starts_at.not_nil!,
+                                              recurrence_end_date: recurrence[:end])
     end
   end
 end
