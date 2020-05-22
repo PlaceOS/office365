@@ -68,7 +68,7 @@ module Office365
       description : String? = "",
       organizer : Recipient | EmailAddress | String | Nil = nil,
       location : String? = nil,
-      recurrence : NamedTuple(type: String, end: Time)? = nil,
+      recurrence : RecurrenceParam? = nil,
       rooms : Array(String | EmailAddress) = [] of String | EmailAddress,
       @all_day = false,
       @id = nil
@@ -126,10 +126,9 @@ module Office365
       @sensitivity = value ? Sensitivity::Private : Sensitivity::Normal
     end
 
-    def set_recurrence(recurrence : NamedTuple(type: String, end: Time)?)
-      @recurrence = PatternedRecurrence.build(type: Office365::RecurrencePatternType.parse(recurrence[:type]),
-                                              recurrence_start_date: @starts_at.not_nil!,
-                                              recurrence_end_date: recurrence[:end])
+    def set_recurrence(recurrence)
+      @recurrence = PatternedRecurrence.build(recurrence_start_date: @starts_at.not_nil!,
+        recurrence: recurrence)
     end
   end
 end

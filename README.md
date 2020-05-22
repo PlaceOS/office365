@@ -162,7 +162,7 @@ event = client.create_event(
   location: "The Red Room",
 
   # adds recurrence
-  recurrence: {type: "daily", end: Time.local("Australia/Sydney").at_beginning_of_day + 6.days},
+  recurrence: RecurrenceParam.new(pattern: "daily", range_end: Time.local(location).at_beginning_of_day + 5.days),
 
   # specify sensitivity
   sensitivity: Office365::Sensitivity::Normal,
@@ -179,7 +179,7 @@ event = client.get_event(mailbox: "foo@bar.com", id: "...")
 
 # update an event
 event.description = "Updated: Something new" # update description
-event.set_recurrence(recurrence: {type: "daily", end: Time.local("Australia/Sydney").at_beginning_of_day + 6.days}) # update recurrence
+event.set_recurrence(RecurrenceParam.new(pattern: "daily", range_end: Time.local(location).at_beginning_of_day + 7.days)) # update recurrence
 updated_event = client.update_event(event: event, mailbox: "foo@bar.com")
 
 # delete event

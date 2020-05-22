@@ -55,7 +55,13 @@ module Office365
     property month : Int32?
     property type : RecurrencePatternType?
 
+    def initialize(@type, @interval)
+    end
+
     def initialize(@type, @interval, @days_of_week)
+    end
+
+    def initialize(@type, @interval, @days_of_week, @first_day_of_week)
     end
   end
 end
