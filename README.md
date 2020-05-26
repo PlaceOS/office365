@@ -162,7 +162,7 @@ event = client.create_event(
   location: "The Red Room",
 
   # adds recurrence
-  recurrence: RecurrenceParam.new(pattern: "daily", range_end: Time.local(location).at_beginning_of_day + 5.days),
+  recurrence: RecurrenceParam.new(pattern: "daily", range_end: Time.local(location: Time::Location.build("Australia/Sydney")).at_beginning_of_day + 5.days),
 
   # specify sensitivity
   sensitivity: Office365::Sensitivity::Normal,
