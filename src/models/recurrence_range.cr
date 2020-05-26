@@ -1,17 +1,32 @@
-class Office365::RecurrenceRange
-  include JSON::Serializable
+module Office365
 
-  @[JSON::Field(key: "startDate")]
-  property start_date : String
+  module TimezoneConverter
+    def self.from_json(value : JSON::PullParser) : String
+      tz = value.read_string
+      translated = WindowsToTzdata.translate(tz)
+      translated ? translated : tz
+    end
 
-  @[JSON::Field(key: "endDate")]
-  property end_date : String
+    def self.to_json(value : String, json : JSON::Builder)
+      json.string(value.to_s)
+    end
+  end
 
-  @[JSON::Field(key: "numberOfOccurrences")]
-  property number_of_occurrences : Int32
+  class RecurrenceRange
+    include JSON::Serializable
 
-  @[JSON::Field(key: "recurrenceTimeZone")]
-  property recurrence_time_zone : String
+    @[JSON::Field(key: "startDate")]
+    property start_date : String
 
-  property type : String
+    @[JSON::Field(key: "endDate")]
+    property end_date : String
+
+    @[JSON::Field(key: "recurrenceTimeZone", converter: Office365::TimezoneConverter)]
+    property recurrence_time_zone : String?
+
+    property type : String
+
+    def initialize(@type, @start_date, @end_date)
+    end
+  end
 end
