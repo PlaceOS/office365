@@ -179,7 +179,7 @@ event = client.get_event(mailbox: "foo@bar.com", id: "...")
 
 # update an event
 event.description = "Updated: Something new" # update description
-event.set_recurrence(RecurrenceParam.new(pattern: "daily", range_end: Time.local(location).at_beginning_of_day + 7.days)) # update recurrence
+event.set_recurrence(RecurrenceParam.new(pattern: "daily", range_end: Time.local(location: Time::Location.build("Australia/Sydney")).at_beginning_of_day + 7.days)) # update recurrence
 updated_event = client.update_event(event: event, mailbox: "foo@bar.com")
 
 # delete event
