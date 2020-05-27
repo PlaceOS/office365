@@ -1,24 +1,14 @@
 module Office365::Events
   def list_events(
-    mailbox : String, 
-    calendar_group_id : String? = nil, 
-    calendar_id : String? = nil, 
+    mailbox : String,
+    calendar_group_id : String? = nil,
+    calendar_id : String? = nil,
     period_start : Time = Time.local.at_beginning_of_day,
-    period_end : Time? = nil,
-    limit : Int32 = 100,
-    query_params : Hash(String, String) = {} of String => String
+    period_end : Time? = nil
   )
-    endpoint = calendar_event_path(mailbox, calendar_group_id, calendar_id)
+    endpoint = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end)
 
-    if period_end
-      query_params["$filter"] = "start/dateTime ge '#{period_start.to_utc.to_s("%FT%R")}' and start/dateTime lt '#{period_end.to_utc.to_s("%FT%R")}'"
-    else
-      query_params["$filter"] = "start/dateTime ge '#{period_start.to_utc.to_s("%FT%R")}'"
-    end
-
-    query_params["$top"] = "#{limit}"
-
-    response = graph_request(request_method: "GET", path: endpoint, query: query_params)
+    response = graph_request(request_method: "GET", path: endpoint)
 
     if response.success?
       EventQuery.from_json response.body
@@ -51,7 +41,7 @@ module Office365::Events
     id : String,
     mailbox : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil,
+    calendar_id : String? = nil
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}"
     response = graph_request(request_method: "GET", path: endpoint)
@@ -67,7 +57,7 @@ module Office365::Events
     event : Event,
     mailbox : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil,
+    calendar_id : String? = nil
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{event.id}"
 
@@ -84,7 +74,7 @@ module Office365::Events
     id : String,
     mailbox : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil,
+    calendar_id : String? = nil
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}"
 
@@ -118,6 +108,28 @@ module Office365::Events
     endpoint
   end
 
+  private def calendar_view_path(
+    mailbox : String,
+    calendar_group_id : String? = nil,
+    calendar_id : String? = nil,
+    period_start : Time = Time.local.at_beginning_of_day,
+    period_end : Time? = nil
+  )
+    endpoint = ""
 
+    end_period = period_end ||  Time.local + 6.months
 
+    case {calendar_group_id, calendar_id}
+    when {Nil, Nil}
+      endpoint = "/v1.0/users/#{mailbox}/calendar/calendarView"
+    when {Nil, String}
+      endpoint = "/v1.0/users/#{mailbox}/calendars/#{calendar_id}/calendarView"
+    when {"default", String}
+      endpoint = "/v1.0/users/#{mailbox}/calendargroup/calendars/#{calendar_id}/calendarView"
+    when {String, String}
+      endpoint = "/v1.0/users/#{mailbox}/calendargroups/#{calendar_group_id}/calendars/#{calendar_id}/calendarView"
+    end
+
+    "#{endpoint}?startDateTime=#{period_start.to_s("%FT%T-00:00")}&endDateTime=#{end_period.not_nil!.to_s("%FT%T-00:00")}"
+  end
 end

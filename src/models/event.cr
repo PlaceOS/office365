@@ -52,6 +52,8 @@ module Office365
     property organizer : Recipient?
     property locations : Array(Location)?
     property location : Location?
+    
+    @[JSON::Field(emit_null: true)]
     property recurrence : PatternedRecurrence?
 
     @[JSON::Field(key: "originalStartTimeZone")]
