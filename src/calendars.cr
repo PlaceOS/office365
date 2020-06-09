@@ -112,16 +112,14 @@ module Office365::Calendars
 
   def get_availability(mailbox : String, mailboxes : Array(String), starts_at : Time, ends_at : Time)
     endpoint = "/v1.0/users/#{mailbox}/calendar/getSchedule"
-    data = {"schedules" => mailboxes,
-            "startTime" => starts_at,
-            "endTime"   => ends_at}.to_json
+    data = GetAvailabilityQuery.new(mailboxes, starts_at, ends_at)
 
-    response = graph_request(request_method: "POST", path: endpoint, data: data)
+    response = graph_request(request_method: "POST", path: endpoint, data: data.to_json)
 
     if response.success?
       AvailabilityQuery.from_json(response.body).value
     else
-      raise "error fetching calendar group #{response.status} (#{response.status_code}\n#{response.body}"
+      raise "error fetching availability group #{response.status} (#{response.status_code}\n#{response.body}"
     end
   end
 end
