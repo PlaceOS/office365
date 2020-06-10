@@ -6,6 +6,6 @@ module Office365
     property calendar : String
 
     @[JSON::Field(key: "scheduleItems")]
-    property availability : Array(Availability)
+    property availability : Array(Availability) = [] of Office365::Availability
   end
 end
