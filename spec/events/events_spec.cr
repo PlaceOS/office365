@@ -7,7 +7,7 @@ describe Office365::Events do
       SpecHelper.mock_list_events
 
       client = Office365::Client.new(**SpecHelper.mock_credentials)
-      list = client.list_events(mailbox: "foo@bar.com", period_start: Time.utc(2020, 1, 1, 0, 0))
+      list = client.list_events(mailbox: "foo@bar.com", period_start: Time.utc(2020, 1, 1, 0, 0), period_end: Time.utc(2020, 6, 1, 0, 0))
       list.value.size.should eq(1)
       list.value.first.subject.should eq(SpecHelper.mock_event.subject)
     end
