@@ -12,12 +12,14 @@ module Office365::DateTimeTimeZone
     value = nil
     timezone = nil
 
-    pull.read_object do |key, key_location|
+    pull.read_object do |key, _|
       case key
       when "dateTime"
         value = pull.read_string
       when "timeZone"
         timezone = pull.read_string
+      else
+        # do nothing
       end
     end
 
