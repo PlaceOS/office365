@@ -2,11 +2,7 @@ module Office365::Users
   def get_user(id : String)
     response = graph_request(request_method: "GET", path: "/v1.0/users/#{id}")
 
-    if response.success?
-      User.from_json response.body
-    else
-      raise "error fetching user #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    User.from_json response.body
   end
 
   def list_users(q : String? = nil, limit : Int32? = nil)
@@ -30,10 +26,6 @@ module Office365::Users
 
     response = graph_request("GET", "/v1.0/users", query: query_params)
 
-    if response.success?
-      UserQuery.from_json response.body
-    else
-      raise "error fetching users list #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    UserQuery.from_json response.body
   end
 end

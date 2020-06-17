@@ -52,13 +52,19 @@ module Office365
         path = "#{path}?#{query.map { |k, v| HTTP::Params.parse("#{k}=#{v}") }.join("&")}"
       end
 
-      ConnectProxy::HTTPClient.new(GRAPH_URI) do |client|
+      response = ConnectProxy::HTTPClient.new(GRAPH_URI) do |client|
         client.exec(
           method: request_method,
           path: path,
           headers: headers,
           body: data
         )
+      end
+
+      if response.success?
+        response
+      else
+        raise Office365::Exception.new(response.status, response.body, response.status.description)
       end
     end
 
@@ -75,6 +81,14 @@ module Office365
 
     private def token_lookup
       "#{@tenant}_#{@client_id}"
+    end
+  end
+
+  class Exception < ::Exception
+    property http_status : HTTP::Status
+    property http_body : String
+
+    def initialize(@http_status, @http_body, @message = nil)
     end
   end
 end
