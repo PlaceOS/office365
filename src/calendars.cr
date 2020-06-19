@@ -24,11 +24,8 @@ module Office365::Calendars
     end
 
     response = graph_request(request_method: "GET", path: endpoint, query: query_params)
-    if response.success?
-      CalendarQuery.from_json response.body
-    else
-      raise "error fetching calendars list #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+
+    CalendarQuery.from_json response.body
   end
 
   def list_calendar_groups(mailbox : String?, limit : Int32 = 99)
@@ -43,11 +40,7 @@ module Office365::Calendars
 
     response = graph_request(request_method: "GET", path: endpoint, query: query_params)
 
-    if response.success?
-      CalendarGroupQuery.from_json response.body
-    else
-      raise "error fetching calendar groups list #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    CalendarGroupQuery.from_json response.body
   end
 
   def create_calendar(mailbox : String, name : String, calendar_group_id : String? = nil)
@@ -62,22 +55,14 @@ module Office365::Calendars
 
     response = graph_request(request_method: "POST", path: endpoint, data: {"name" => name}.to_json)
 
-    if response.success?
-      Calendar.from_json response.body
-    else
-      raise "error creating calendar #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    Calendar.from_json response.body
   end
 
   def create_calendar_group(mailbox : String, name : String)
     endpoint = "/v1.0/users/#{mailbox}/calendarGroups"
     response = graph_request(request_method: "POST", path: endpoint, data: {"name" => name}.to_json)
 
-    if response.success?
-      CalendarGroup.from_json response.body
-    else
-      raise "error creating calendar group #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    CalendarGroup.from_json response.body
   end
 
   def delete_calendar(mailbox : String, id : String, calendar_group_id : String? = nil)
@@ -92,22 +77,14 @@ module Office365::Calendars
 
     response = graph_request(request_method: "DELETE", path: endpoint)
 
-    if response.success?
-      true
-    else
-      raise "error deleting calendar #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    response.success? ? true : false
   end
 
   def delete_calendar_group(mailbox : String, id : String)
     endpoint = "/v1.0/users/#{mailbox}/calendarGroups/#{id}"
     response = graph_request(request_method: "DELETE", path: endpoint)
 
-    if response.success?
-      true
-    else
-      raise "error deleting calendar group #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    response.success? ? true : false
   end
 
   def get_availability(mailbox : String, mailboxes : Array(String), starts_at : Time, ends_at : Time)
@@ -116,10 +93,6 @@ module Office365::Calendars
 
     response = graph_request(request_method: "POST", path: endpoint, data: data.to_json)
 
-    if response.success?
-      AvailabilityQuery.from_json(response.body).value
-    else
-      raise "error fetching availability group #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    AvailabilityQuery.from_json(response.body).value
   end
 end

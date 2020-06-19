@@ -10,11 +10,7 @@ module Office365::Events
 
     response = graph_request(request_method: "GET", path: endpoint)
 
-    if response.success?
-      EventQuery.from_json response.body
-    else
-      raise "error fetching events list #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    EventQuery.from_json response.body
   end
 
   def create_event(
@@ -30,11 +26,7 @@ module Office365::Events
 
     response = graph_request(request_method: "POST", path: endpoint, data: event.to_json)
 
-    if response.success?
-      Event.from_json response.body
-    else
-      raise "error creating event #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    Event.from_json response.body
   end
 
   def get_event(
@@ -46,11 +38,7 @@ module Office365::Events
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}"
     response = graph_request(request_method: "GET", path: endpoint)
 
-    if response.success?
-      Event.from_json response.body
-    else
-      raise "error getting event #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    Event.from_json response.body
   end
 
   def update_event(
@@ -63,11 +51,7 @@ module Office365::Events
 
     response = graph_request(request_method: "PATCH", path: endpoint, data: event.to_json)
 
-    if response.success?
-      Event.from_json response.body
-    else
-      raise "error updating event #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    Event.from_json response.body
   end
 
   def delete_event(
@@ -80,11 +64,7 @@ module Office365::Events
 
     response = graph_request(request_method: "DELETE", path: endpoint)
 
-    if response.success?
-      true
-    else
-      raise "error deleting event #{response.status} (#{response.status_code}\n#{response.body}"
-    end
+    response.success? ? true : false
   end
 
   private def calendar_event_path(
