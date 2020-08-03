@@ -19,6 +19,8 @@ module Office365::Users
       filter_param = "accountEnabled eq true"
     end
 
+    limit = limit.to_s if limit
+
     query_params = {
       "$filter" => filter_param,
       "$top"    => limit,
