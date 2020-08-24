@@ -1,4 +1,19 @@
 module Office365::Calendars
+
+  def get_calendar(mailbox : String? = nil)
+    query_params = {} of String => String
+
+    case mailbox
+    when nil
+      endpoint = "/v1.0/me/calendar"
+    when String
+      endpoint = "/v1.0/users/#{mailbox}/calendar"
+    end
+
+    response = graph_request(request_method: "GET", path: endpoint.not_nil!, query: query_params)
+    Calendar.from_json response.body
+  end
+
   def list_calendars(mailbox : String? = nil, calendar_group_id : String? = nil, match : String? = nil, search : String? = nil, limit : Int32? = nil)
     query_params = {} of String => String
 
