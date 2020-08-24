@@ -44,6 +44,9 @@ module Office365
     @[JSON::Field(key: "isAllDay")]
     property? all_day : Bool
 
+    @[JSON::Field(key: "responseStatus")]
+    property response_status : ResponseStatus?
+
     property id : String?
     property subject : String?
     property attendees : Array(Attendee) = [] of Office365::Attendee
@@ -71,6 +74,7 @@ module Office365
       organizer : Recipient | EmailAddress | String | Nil = nil,
       location : String? = nil,
       recurrence : RecurrenceParam? = nil,
+      @response_status : ResponseStatus? = nil,
       rooms : Array(String | EmailAddress) = [] of String | EmailAddress,
       @all_day = false,
       @id = nil
@@ -133,6 +137,28 @@ module Office365
     def set_recurrence(recurrence)
       @recurrence = PatternedRecurrence.build(recurrence_start_date: @starts_at.not_nil!,
         recurrence: recurrence)
+    end
+
+    struct ResponseStatus
+      include JSON::Serializable
+      enum Response
+        None
+        Organizer
+        TentativelyAccepted
+        Accepted
+        Declined
+        NotResponded
+
+        def to_json(json : JSON::Builder)
+          json.string(to_s.downcase)
+        end
+      end
+
+      property response : Response?
+      property time : String?
+
+      def initialize(@response, @time)
+      end
     end
   end
 end

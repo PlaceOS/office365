@@ -45,6 +45,7 @@ describe Office365::Events do
       client = Office365::Client.new(**SpecHelper.mock_credentials)
       event = client.get_event(id: "1234", mailbox: "foo@bar.com")
       event.subject.should eq(SpecHelper.mock_event.subject)
+      event.response_status.not_nil!.response.should eq(SpecHelper.mock_event.response_status.not_nil!.response)
     end
   end
 
