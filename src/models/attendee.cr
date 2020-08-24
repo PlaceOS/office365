@@ -21,7 +21,7 @@ module Office365
 
     delegate name, to: @email_address
 
-    def initialize(email : EmailAddress | String, @type = AttendeeType::Required, @response_status : ResponseStatus? = nil)
+    def initialize(email : EmailAddress | String, @type = AttendeeType::Required, @status : ResponseStatus? = nil)
       case email
       when String
         @email_address = EmailAddress.new(email)
