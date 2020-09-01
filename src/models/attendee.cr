@@ -17,9 +17,11 @@ module Office365
     @[JSON::Field(key: "emailAddress")]
     property email_address : EmailAddress
 
+    property status : ResponseStatus?
+
     delegate name, to: @email_address
 
-    def initialize(email : EmailAddress | String, @type = AttendeeType::Required)
+    def initialize(email : EmailAddress | String, @type = AttendeeType::Required, @status : ResponseStatus? = nil)
       case email
       when String
         @email_address = EmailAddress.new(email)

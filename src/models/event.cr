@@ -44,6 +44,9 @@ module Office365
     @[JSON::Field(key: "isAllDay")]
     property? all_day : Bool
 
+    @[JSON::Field(key: "responseStatus")]
+    property response_status : ResponseStatus?
+
     property id : String?
     property subject : String?
     property attendees : Array(Attendee) = [] of Office365::Attendee
@@ -71,6 +74,7 @@ module Office365
       organizer : Recipient | EmailAddress | String | Nil = nil,
       location : String? = nil,
       recurrence : RecurrenceParam? = nil,
+      @response_status : ResponseStatus? = nil,
       rooms : Array(String | EmailAddress) = [] of String | EmailAddress,
       @all_day = false,
       @id = nil

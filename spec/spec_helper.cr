@@ -115,6 +115,7 @@ module SpecHelper
       subject:   "My Unique Event Subject",
       rooms:     ["Red Room"],
       attendees: ["elon@musk.com", Office365::EmailAddress.new(address: "david@bowie.net", name: "David Bowie"), Office365::Attendee.new(email: "the@goodies.org")],
+      response_status: Office365::ResponseStatus.new(response: Office365::ResponseStatus::Response::Organizer, time: "0001-01-01T00:00:00Z")
     }
   end
 
