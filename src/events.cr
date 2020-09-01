@@ -97,7 +97,7 @@ module Office365::Events
   )
     endpoint = ""
 
-    end_period = period_end ||  Time.local + 6.months
+    end_period = period_end ||  period_start + 6.months
 
     case {calendar_group_id, calendar_id}
     when {Nil, Nil}
