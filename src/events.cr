@@ -1,15 +1,25 @@
 module Office365::Events
-  def list_events(
-    mailbox : String,
-    calendar_group_id : String? = nil,
-    calendar_id : String? = nil,
-    period_start : Time = Time.local.at_beginning_of_day,
-    period_end : Time? = nil
-  )
+
+  def list_events_request(
+       mailbox : String,
+       calendar_group_id : String? = nil,
+       calendar_id : String? = nil,
+       period_start : Time = Time.local.at_beginning_of_day,
+       period_end : Time? = nil
+     )
     endpoint = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end)
 
-    response = graph_request(request_method: "GET", path: endpoint)
+    graph_http_request(request_method: "GET", path: endpoint)
+  end
 
+  def list_events(*args, **opts)
+    request = list_events_request(*args, **opts)
+    response = graph_request(request)
+
+    list_events(response)
+  end
+
+  def list_events(response : HTTP::Client::Response)
     EventQuery.from_json response.body
   end
 
@@ -29,15 +39,24 @@ module Office365::Events
     Event.from_json response.body
   end
 
-  def get_event(
-    id : String,
-    mailbox : String,
-    calendar_group_id : String? = nil,
-    calendar_id : String? = nil
-  )
+  def get_event_request(
+       id : String,
+       mailbox : String,
+       calendar_group_id : String? = nil,
+       calendar_id : String? = nil
+     )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}"
-    response = graph_request(request_method: "GET", path: endpoint)
+    graph_http_request(request_method: "GET", path: endpoint)
+  end
 
+  def get_event(*args, **opts)
+    request = get_event_request(*args, **opts)
+    response = graph_request(request)
+
+    get_event(response)
+  end
+
+  def get_event(response : HTTP::Client::Response)
     Event.from_json response.body
   end
 

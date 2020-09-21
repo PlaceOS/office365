@@ -11,6 +11,22 @@ describe Office365::Events do
       list.value.size.should eq(1)
       list.value.first.subject.should eq(SpecHelper.mock_event.subject)
     end
+    it "suceeds when everything goes well when we batch requests" do
+      SpecHelper.mock_client_auth
+      SpecHelper.mock_list_events
+      SpecHelper.mock_batch_list_events
+
+      client = Office365::Client.new(**SpecHelper.mock_credentials)
+      request_1 = client.list_events_request(mailbox: "foo@bar.com", period_start: Time.utc(2020, 1, 1, 0, 0), period_end: Time.utc(2020, 6, 1, 0, 0))
+      request_2 = client.get_event_request(id: "1234", mailbox: "foo@bar.com")
+      results = client.batch({request_1, request_2})
+      list = client.list_events(results[request_1])
+      list.value.size.should eq(1)
+      list.value.first.subject.should eq(SpecHelper.mock_event.subject)
+      event = client.get_event(results[request_2])
+      event.subject.should eq(SpecHelper.mock_event.subject)
+      event.response_status.not_nil!.response.should eq(SpecHelper.mock_event.response_status.not_nil!.response)
+    end
   end
 
   describe "#create_event UTC" do
