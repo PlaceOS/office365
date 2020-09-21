@@ -16,7 +16,9 @@ module Office365::BatchRequest
       req_body = {"requests": payload_request_arr}
 
       endpoint = "/v1.0/$batch"
-      batch_response = graph_request(request_method: "POST", path: endpoint, data: req_body.to_json)
+
+      http_req = graph_http_request(request_method: "POST", path: endpoint, data: req_body.to_json)
+      batch_response = graph_request(http_req)
 
       parsed_response = JSON.parse(batch_response.body).as_h
 

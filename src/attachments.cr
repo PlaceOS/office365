@@ -1,12 +1,21 @@
 module Office365::Attachments
-  def list_attachments(mailbox : String,
-                       event_id : String,
-                       calendar_group_id : String? = nil,
-                       calendar_id : String? = nil)
+  def list_attachments_request(mailbox : String,
+                               event_id : String,
+                               calendar_group_id : String? = nil,
+                               calendar_id : String? = nil)
     endpoint = event_attachment_path(mailbox, event_id, calendar_group_id, calendar_id)
 
-    response = graph_request(request_method: "GET", path: endpoint, query: {"$top" => "100"})
+    graph_http_request(request_method: "GET", path: endpoint, query: {"$top" => "100"})
+  end
 
+  def list_attachments(*args, **opts)
+    request = list_attachments_request(*args, **opts)
+    response = graph_request(request)
+
+    list_attachments(response)
+  end
+
+  def list_attachments(response : HTTP::Client::Response)
     if response.success?
       AttachmentQuery.from_json response.body
     else
@@ -14,7 +23,7 @@ module Office365::Attachments
     end
   end
 
-  def create_attachment(
+  def create_attachment_request(
     mailbox : String,
     event_id : String,
     name : String,
@@ -25,8 +34,17 @@ module Office365::Attachments
     attachment = Attachment.new(name, content_bytes)
     endpoint = event_attachment_path(mailbox, event_id, calendar_group_id, calendar_id)
 
-    response = graph_request(request_method: "POST", path: endpoint, data: attachment.to_json)
+    graph_http_request(request_method: "POST", path: endpoint, data: attachment.to_json)
+  end
 
+  def create_attachment(*args, **opts)
+    request = create_attachment_request(*args, **opts)
+    response = graph_request(request)
+
+    create_attachment(response)
+  end
+
+  def create_attachment(response : HTTP::Client::Response)
     if response.success?
       Attachment.from_json response.body
     else
@@ -34,7 +52,7 @@ module Office365::Attachments
     end
   end
 
-  def get_attachment(
+  def get_attachment_request(
     id : String,
     mailbox : String,
     event_id : String,
@@ -42,8 +60,17 @@ module Office365::Attachments
     calendar_id : String? = nil
   )
     endpoint = "#{event_attachment_path(mailbox, event_id, calendar_group_id, calendar_id)}/#{id}"
-    response = graph_request(request_method: "GET", path: endpoint)
+    graph_http_request(request_method: "GET", path: endpoint)
+  end
 
+  def get_attachment(*args, **opts)
+    request = get_attachment_request(*args, **opts)
+    response = graph_request(request)
+
+    get_attachment(response)
+  end
+
+  def get_attachment(response : HTTP::Client::Response)
     if response.success?
       Attachment.from_json response.body
     else
@@ -51,7 +78,7 @@ module Office365::Attachments
     end
   end
 
-  def delete_attachment(
+  def delete_attachment_request(
     id : String,
     mailbox : String,
     event_id : String,
@@ -60,8 +87,17 @@ module Office365::Attachments
   )
     endpoint = "#{event_attachment_path(mailbox, event_id, calendar_group_id, calendar_id)}/#{id}"
 
-    response = graph_request(request_method: "DELETE", path: endpoint)
+    graph_http_request(request_method: "DELETE", path: endpoint)
+  end
 
+  def delete_attachment(*args, **opts)
+    request = delete_attachment_request(*args, **opts)
+    response = graph_request(request)
+
+    delete_attachment(response)
+  end
+
+  def delete_attachment(response : HTTP::Client::Response)
     if response.success?
       true
     else

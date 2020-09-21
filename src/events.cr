@@ -23,19 +23,28 @@ module Office365::Events
     EventQuery.from_json response.body
   end
 
-  def create_event(
-    mailbox : String,
-    starts_at : Time,
-    ends_at : Time?,
-    calendar_group_id : String? = nil,
-    calendar_id : String? = nil,
-    **opts
-  )
+  def create_event_request(
+       mailbox : String,
+       starts_at : Time,
+       ends_at : Time?,
+       calendar_group_id : String? = nil,
+       calendar_id : String? = nil,
+       **opts
+     )
     event = Event.new(**opts.merge(starts_at: starts_at, ends_at: ends_at))
     endpoint = calendar_event_path(mailbox, calendar_group_id, calendar_id)
 
-    response = graph_request(request_method: "POST", path: endpoint, data: event.to_json)
+    graph_http_request(request_method: "POST", path: endpoint, data: event.to_json)
+  end
 
+  def create_event(*args, **opts)
+    request = create_event_request(*args, **opts)
+    response = graph_request(request)
+
+    create_event(response)
+  end
+
+  def create_event(response : HTTP::Client::Response)
     Event.from_json response.body
   end
 
@@ -60,29 +69,47 @@ module Office365::Events
     Event.from_json response.body
   end
 
-  def update_event(
-    event : Event,
-    mailbox : String,
-    calendar_group_id : String? = nil,
-    calendar_id : String? = nil
-  )
+  def update_event_request(
+       event : Event,
+       mailbox : String,
+       calendar_group_id : String? = nil,
+       calendar_id : String? = nil
+     )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{event.id}"
 
-    response = graph_request(request_method: "PATCH", path: endpoint, data: event.to_json)
+    graph_http_request(request_method: "PATCH", path: endpoint, data: event.to_json)
+  end
 
+  def update_event(*args, **opts)
+    request = update_event_request(*args, **opts)
+    response = graph_request(request)
+
+    update_event(response)
+  end
+
+  def update_event(response : HTTP::Client::Response)
     Event.from_json response.body
   end
 
-  def delete_event(
-    id : String,
-    mailbox : String,
-    calendar_group_id : String? = nil,
-    calendar_id : String? = nil
-  )
+  def delete_event_request(
+       id : String,
+       mailbox : String,
+       calendar_group_id : String? = nil,
+       calendar_id : String? = nil
+     )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}"
 
-    response = graph_request(request_method: "DELETE", path: endpoint)
+    graph_http_request(request_method: "DELETE", path: endpoint)
+  end
 
+  def delete_event(*args, **opts)
+    request = delete_event_request(*args, **opts)
+    response = graph_request(request)
+
+    delete_event(response)
+  end
+
+  def delete_event(response : HTTP::Client::Response)
     response.success? ? true : false
   end
 

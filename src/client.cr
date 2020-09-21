@@ -46,7 +46,7 @@ module Office365
     def graph_http_request(
          request_method : String,
          path : String,
-         body : String? = nil,
+         data : String? = nil,
          query : Hash(String, String)? = nil,
          headers : HTTP::Headers = default_headers
        ) : HTTP::Request
@@ -55,7 +55,7 @@ module Office365
         path = "#{path}?#{query.map { |k, v| HTTP::Params.parse("#{k}=#{v}") }.join("&")}"
       end
 
-      HTTP::Request.new(request_method, path, headers, body)
+      HTTP::Request.new(request_method, path, headers, data)
     end
 
     private def graph_request(http_request : HTTP::Request)
@@ -68,16 +68,6 @@ module Office365
       else
         raise Office365::Exception.new(response.status, response.body, response.status.description)
       end
-    end
-
-    private def graph_request(
-      request_method : String,
-      path : String,
-      data : String? = nil,
-      query : Hash(String, String)? = nil
-    )
-      http_request = graph_http_request(request_method: request_method, path: path, query: query, body: data)
-      graph_request(http_request)
     end
 
     private def default_headers
