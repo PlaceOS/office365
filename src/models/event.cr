@@ -47,6 +47,9 @@ module Office365
     @[JSON::Field(key: "responseStatus")]
     property response_status : ResponseStatus?
 
+    @[JSON::Field(key: "seriesMasterId")]
+    property series_master_id : String?
+
     property id : String?
     property subject : String?
     property attendees : Array(Attendee) = [] of Office365::Attendee
@@ -77,7 +80,8 @@ module Office365
       @response_status : ResponseStatus? = nil,
       rooms : Array(String | EmailAddress) = [] of String | EmailAddress,
       @all_day = false,
-      @id = nil
+      @id = nil,
+      @series_master_id = nil
     )
       @body = ItemBody.new(description)
 
