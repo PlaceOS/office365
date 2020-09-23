@@ -110,12 +110,12 @@ module SpecHelper
 
   def mock_event_data
     {
-      starts_at: Time.local,
-      ends_at:   Time.local + 30.minutes,
-      subject:   "My Unique Event Subject",
-      rooms:     ["Red Room"],
-      attendees: ["elon@musk.com", Office365::EmailAddress.new(address: "david@bowie.net", name: "David Bowie"), Office365::Attendee.new(email: "the@goodies.org")],
-      response_status: Office365::ResponseStatus.new(response: Office365::ResponseStatus::Response::Organizer, time: "0001-01-01T00:00:00Z")
+      starts_at:       Time.local,
+      ends_at:         Time.local + 30.minutes,
+      subject:         "My Unique Event Subject",
+      rooms:           ["Red Room"],
+      attendees:       ["elon@musk.com", Office365::EmailAddress.new(address: "david@bowie.net", name: "David Bowie"), Office365::Attendee.new(email: "the@goodies.org")],
+      response_status: Office365::ResponseStatus.new(response: Office365::ResponseStatus::Response::Organizer, time: "0001-01-01T00:00:00Z"),
     }
   end
 
@@ -153,8 +153,32 @@ module SpecHelper
     }.to_json
   end
 
+  def mock_batch_event_list_json
+    {
+      "responses" => [
+        {
+          "id"     => 0,
+          "status" => 200,
+          "body"   => {
+            "@odata.context" => "https://graph.microsoft.com/v1.0/$metadata#users('7bb44254-ffeb-4040-84bb-8c2783f726e8')/calendar/calendarView",
+            "value"          => [JSON.parse(with_tz(mock_event.to_json))],
+          },
+        },
+        {
+          "id"     => 1,
+          "status" => 200,
+          "body"   => JSON.parse(with_tz(mock_event.to_json)),
+        },
+      ],
+    }.to_json
+  end
+
   def mock_list_events
     WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/calendarView?startDateTime=2020-01-01T00:00:00-00:00&endDateTime=2020-06-01T00:00:00-00:00").to_return(mock_event_query_json)
+  end
+
+  def mock_batch_list_events
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/$batch").to_return(mock_batch_event_list_json)
   end
 
   def mock_create_event
@@ -191,19 +215,19 @@ module SpecHelper
 
   def mock_attachment_data
     {
-      id: "123",
-      name: "test.txt",
-      contentType: "text/plain",
-      contentBytes: "aGVsbG8gd29ybGQ=",
+      id:            "123",
+      name:          "test.txt",
+      contentType:   "text/plain",
+      contentBytes:  "aGVsbG8gd29ybGQ=",
       "@odata.type": "#microsoft.graph.fileAttachment",
-      "isInline": false,
-      size: 217
+      "isInline":    false,
+      size:          217,
     }
   end
 
   def mock_attachment_query_json
     {
-      "value" => [mock_attachment_data]
+      "value" => [mock_attachment_data],
     }.to_json
   end
 

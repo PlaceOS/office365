@@ -2,6 +2,7 @@ require "./users"
 require "./calendars"
 require "./events"
 require "./attachments"
+require "./batch_request"
 
 module Office365
   class Client
@@ -9,6 +10,7 @@ module Office365
     include Office365::Calendars
     include Office365::Events
     include Office365::Attachments
+    include Office365::BatchRequest
 
     LOGIN_URI    = URI.parse("https://login.microsoftonline.com")
     GRAPH_URI    = URI.parse("https://graph.microsoft.com/")
@@ -41,24 +43,24 @@ module Office365
       end
     end
 
-    private def graph_request(
-      request_method : String,
-      path : String,
-      data : String? = nil,
-      query : Hash(String, String)? = nil,
-      headers : HTTP::Headers = default_headers
-    )
+    def graph_http_request(
+         request_method : String,
+         path : String,
+         data : String? = nil,
+         query : Hash(String, String)? = nil,
+         headers : HTTP::Headers = default_headers
+       ) : HTTP::Request
+
       if query
         path = "#{path}?#{query.map { |k, v| HTTP::Params.parse("#{k}=#{v}") }.join("&")}"
       end
 
+      HTTP::Request.new(request_method, path, headers, data)
+    end
+
+    private def graph_request(http_request : HTTP::Request)
       response = ConnectProxy::HTTPClient.new(GRAPH_URI) do |client|
-        client.exec(
-          method: request_method,
-          path: path,
-          headers: headers,
-          body: data
-        )
+        client.exec(http_request)
       end
 
       if response.success?
