@@ -34,7 +34,7 @@ module Office365::DateTimeTimeZone
     tz = value.location.to_s
     case tz
     when "Local"
-      "UTC"
+      default_tz
     else
       tz
     end
@@ -43,6 +43,16 @@ module Office365::DateTimeTimeZone
   def tz_location(tz : String)
     loc = WindowsToTzdata.translate(tz)
 
-    loc ? Time::Location.load(loc) : Time::Location.load(tz)
+    tz_loc = loc || tz
+
+    begin
+      Time::Location.load(tz_loc)
+    rescue Time::Location::InvalidLocationNameError
+      Time::Location.load(default_tz)
+    end
+  end
+
+  private def default_tz
+    WindowsToTzdata::DEFAULT_TIME_ZONE
   end
 end
