@@ -1,4 +1,6 @@
 class Office365::WindowsToTzdata
+  DEFAULT_TIME_ZONE = ENV["TIME_ZONE"]? || "UTC"
+
   TZMAP = {
     "AUS Central Standard Time"       => "Australia/Darwin",
     "AUS Eastern Standard Time"       => "Australia/Sydney",
@@ -134,6 +136,7 @@ class Office365::WindowsToTzdata
     "West Asia Standard Time"         => "Asia/Tashkent",
     "West Pacific Standard Time"      => "Pacific/Port_Moresby",
     "Yakutsk Standard Time"           => "Asia/Yakutsk",
+    "tzone://Microsoft/Custom"        => DEFAULT_TIME_ZONE
   }
 
   def self.translate(window_tz)
