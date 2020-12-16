@@ -5,9 +5,7 @@ module Office365::Users
 
   def get_user(*args, **opts)
     request = get_user_request(*args, **opts)
-    response = graph_request(request)
-
-    get_user(response)
+    get_user graph_request(request)
   end
 
   def get_user(response : HTTP::Client::Response)

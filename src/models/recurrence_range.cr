@@ -1,5 +1,4 @@
 module Office365
-
   module TimezoneConverter
     def self.from_json(value : JSON::PullParser) : String
       tz = value.read_string

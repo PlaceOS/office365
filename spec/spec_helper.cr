@@ -36,6 +36,29 @@ module SpecHelper
       .to_return(mock_user_query.to_json)
   end
 
+  def mock_group
+    Office365::Group.from_json(%{{"id":"1234-5678-9012","visibility":"Public","displayName":"Group Name","mailEnabled":false}})
+  end
+
+  def mock_group_query
+    Office365::GroupQuery.new(value: [mock_group])
+  end
+
+  def mock_get_group
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups/#{mock_group.id}")
+      .to_return(mock_group.to_json)
+  end
+
+  def mock_list_group_members
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups/1234-5678-9012/members?%24filter=accountEnabled+eq+true")
+      .to_return(mock_user_query.to_json)
+  end
+
+  def mock_groups_member_of
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{mock_user.id}/memberOf/microsoft.graph.group?%24orderby=displayName")
+      .to_return(mock_group_query.to_json)
+  end
+
   def mock_calendar
     Office365::Calendar.from_json(%{{"id":"1234","name":"Test calendar"}})
   end

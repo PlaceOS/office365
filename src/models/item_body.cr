@@ -4,7 +4,7 @@ class Office365::ItemBody
   property content : String?
 
   @[JSON::Field(key: "contentType")]
-  property content_type  : String?
+  property content_type : String?
 
   def initialize(@content = "", @content_type = "text")
   end

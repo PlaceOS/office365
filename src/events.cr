@@ -1,12 +1,11 @@
 module Office365::Events
-
   def list_events_request(
-       mailbox : String,
-       calendar_group_id : String? = nil,
-       calendar_id : String? = nil,
-       period_start : Time = Time.local.at_beginning_of_day,
-       period_end : Time? = nil
-     )
+    mailbox : String,
+    calendar_group_id : String? = nil,
+    calendar_id : String? = nil,
+    period_start : Time = Time.local.at_beginning_of_day,
+    period_end : Time? = nil
+  )
     endpoint = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end)
 
     graph_http_request(request_method: "GET", path: endpoint)
@@ -24,13 +23,13 @@ module Office365::Events
   end
 
   def create_event_request(
-       mailbox : String,
-       starts_at : Time,
-       ends_at : Time?,
-       calendar_group_id : String? = nil,
-       calendar_id : String? = nil,
-       **opts
-     )
+    mailbox : String,
+    starts_at : Time,
+    ends_at : Time?,
+    calendar_group_id : String? = nil,
+    calendar_id : String? = nil,
+    **opts
+  )
     event = Event.new(**opts.merge(starts_at: starts_at, ends_at: ends_at))
     endpoint = calendar_event_path(mailbox, calendar_group_id, calendar_id)
 
@@ -49,11 +48,11 @@ module Office365::Events
   end
 
   def get_event_request(
-       id : String,
-       mailbox : String,
-       calendar_group_id : String? = nil,
-       calendar_id : String? = nil
-     )
+    id : String,
+    mailbox : String,
+    calendar_group_id : String? = nil,
+    calendar_id : String? = nil
+  )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}"
     graph_http_request(request_method: "GET", path: endpoint)
   end
@@ -70,11 +69,11 @@ module Office365::Events
   end
 
   def update_event_request(
-       event : Event,
-       mailbox : String,
-       calendar_group_id : String? = nil,
-       calendar_id : String? = nil
-     )
+    event : Event,
+    mailbox : String,
+    calendar_group_id : String? = nil,
+    calendar_id : String? = nil
+  )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{event.id}"
 
     graph_http_request(request_method: "PATCH", path: endpoint, data: event.to_json)
@@ -92,11 +91,11 @@ module Office365::Events
   end
 
   def delete_event_request(
-       id : String,
-       mailbox : String,
-       calendar_group_id : String? = nil,
-       calendar_id : String? = nil
-     )
+    id : String,
+    mailbox : String,
+    calendar_group_id : String? = nil,
+    calendar_id : String? = nil
+  )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}"
 
     graph_http_request(request_method: "DELETE", path: endpoint)
@@ -143,7 +142,7 @@ module Office365::Events
   )
     endpoint = ""
 
-    end_period = period_end ||  period_start + 6.months
+    end_period = period_end || period_start + 6.months
 
     case {calendar_group_id, calendar_id}
     when {Nil, Nil}

@@ -1,14 +1,16 @@
 require "./users"
-require "./calendars"
+require "./groups"
 require "./events"
+require "./calendars"
 require "./attachments"
 require "./batch_request"
 
 module Office365
   class Client
     include Office365::Users
-    include Office365::Calendars
+    include Office365::Groups
     include Office365::Events
+    include Office365::Calendars
     include Office365::Attachments
     include Office365::BatchRequest
 
@@ -44,13 +46,12 @@ module Office365
     end
 
     def graph_http_request(
-         request_method : String,
-         path : String,
-         data : String? = nil,
-         query : Hash(String, String)? = nil,
-         headers : HTTP::Headers = default_headers
-       ) : HTTP::Request
-
+      request_method : String,
+      path : String,
+      data : String? = nil,
+      query : Hash(String, String)? = nil,
+      headers : HTTP::Headers = default_headers
+    ) : HTTP::Request
       if query
         path = "#{path}?#{query.map { |k, v| HTTP::Params.parse("#{k}=#{v}") }.join("&")}"
       end
