@@ -21,6 +21,7 @@ module Office365::Groups
     query_params = {
       "$orderby" => "displayName",
       "$search"  => filter_param,
+      "$top"     => "999",
     }.compact
 
     # This is required to do searching
