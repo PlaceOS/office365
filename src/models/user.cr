@@ -12,6 +12,9 @@ module Office365
     @[JSON::Field(key: "displayName")]
     property display_name : String?
 
+    @[JSON::Field(key: "userPrincipalName")]
+    property user_principal_name : String
+
     @[JSON::Field(key: "jobTitle")]
     property job_title : String?
   end

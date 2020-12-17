@@ -19,7 +19,7 @@ module SpecHelper
   end
 
   def mock_user
-    Office365::User.from_json(%{{"id":"1234","mail":"foo@bar.com","displayName":"Foo Bar"}})
+    Office365::User.from_json(%{{"id":"1234","mail":"foo@bar.com","displayName":"Foo Bar","userPrincipalName":"foo@bar.com"}})
   end
 
   def mock_user_query
