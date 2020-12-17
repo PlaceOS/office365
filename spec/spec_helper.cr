@@ -50,7 +50,7 @@ module SpecHelper
   end
 
   def mock_list_group_members
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups/1234-5678-9012/members?%24filter=accountEnabled+eq+true")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups/1234-5678-9012/members/microsoft.graph.user?%24orderby=displayName")
       .to_return(mock_user_query.to_json)
   end
 

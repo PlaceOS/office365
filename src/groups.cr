@@ -12,25 +12,27 @@ module Office365::Groups
     Group.from_json response.body
   end
 
+  # https://docs.microsoft.com/en-us/graph/api/group-list-members?view=graph-rest-1.0&tabs=http
   def list_group_members_request(group_id : String, q : String? = nil)
-    if q
-      queries = q.split(" ")
-      filter_params = [] of String
-
-      queries.each do |query|
-        filter_params << "(startswith(displayName,'#{query}') or startswith(givenName,'#{query}') or startswith(surname,'#{query}') or startswith(mail,'#{query}'))"
-      end
-
-      filter_param = "(accountEnabled eq true) and #{filter_params.join(" and ")}"
-    else
-      filter_param = "accountEnabled eq true"
+    if q.presence
+      filter_param = %("displayName:#{q}")
     end
 
     query_params = {
-      "$filter" => filter_param,
-    }
+      "$orderby" => "displayName",
+      "$search"  => filter_param,
+    }.compact
 
-    graph_http_request(request_method: "GET", path: "/v1.0/groups/#{group_id}/members", query: query_params)
+    # This is required to do searching
+    headers = HTTP::Headers{"ConsistencyLevel" => "eventual"}
+    headers.merge! default_headers
+
+    graph_http_request(
+      request_method: "GET",
+      path: "/v1.0/groups/#{group_id}/members/microsoft.graph.user",
+      query: query_params,
+      headers: headers
+    )
   end
 
   def list_group_members(*args, **opts)
@@ -45,7 +47,7 @@ module Office365::Groups
   # MembersOf Request, what groups a user is in
   def groups_member_of_request(user_id : String, q : String? = nil)
     if q.presence
-      filter_param = "displayName:#{q}"
+      filter_param = %("displayName:#{q}")
     end
 
     query_params = {
@@ -53,7 +55,16 @@ module Office365::Groups
       "$search"  => filter_param,
     }.compact
 
-    graph_http_request(request_method: "GET", path: "/v1.0/users/#{user_id}/memberOf/microsoft.graph.group", query: query_params)
+    # This is required to do searching
+    headers = HTTP::Headers{"ConsistencyLevel" => "eventual"}
+    headers.merge! default_headers
+
+    graph_http_request(
+      request_method: "GET",
+      path: "/v1.0/users/#{user_id}/memberOf/microsoft.graph.group",
+      query: query_params,
+      headers: headers
+    )
   end
 
   def groups_member_of(*args, **opts)
