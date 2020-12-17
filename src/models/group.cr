@@ -4,7 +4,7 @@ module Office365
 
     property id : String
     property description : String?
-    property visibility : String
+    property visibility : String?
     property mail : String?
 
     @[JSON::Field(key: "mailEnabled")]
