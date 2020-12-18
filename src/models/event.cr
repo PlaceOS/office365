@@ -50,6 +50,12 @@ module Office365
     @[JSON::Field(key: "seriesMasterId")]
     property series_master_id : String?
 
+    @[JSON::Field(key: "onlineMeetingProvider")]
+    property online_meeting_provider : String?
+
+    @[JSON::Field(key: "isOnlineMeeting")]
+    property is_online_meeting : Bool?
+
     property id : String?
     property subject : String?
     property attendees : Array(Attendee) = [] of Office365::Attendee
@@ -81,9 +87,11 @@ module Office365
       rooms : Array(String | EmailAddress) = [] of String | EmailAddress,
       @all_day = false,
       @id = nil,
-      @series_master_id = nil
+      @series_master_id = nil,
+      @online_meeting_provider = nil
     )
       @body = ItemBody.new(description)
+      @is_online_meeting = @online_meeting_provider ? true : nil
 
       attendees.each do |attendee|
         case attendee

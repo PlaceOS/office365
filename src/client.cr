@@ -75,7 +75,7 @@ module Office365
       HTTP::Headers{
         "Authorization" => "Bearer #{access_token}",
         "Content-type"  => "application/json",
-        "Prefer"        => %(IdType="ImmutableId")
+        "Prefer"        => %(IdType="ImmutableId"),
       }
     end
 
