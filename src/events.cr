@@ -4,9 +4,10 @@ module Office365::Events
     calendar_group_id : String? = nil,
     calendar_id : String? = nil,
     period_start : Time = Time.local.at_beginning_of_day,
-    period_end : Time? = nil
+    period_end : Time? = nil,
+    ical_uid : String? = nil
   )
-    endpoint = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end)
+    endpoint = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end, ical_uid)
 
     graph_http_request(request_method: "GET", path: endpoint)
   end
@@ -117,20 +118,18 @@ module Office365::Events
     calendar_group_id : String? = nil,
     calendar_id : String? = nil
   )
-    endpoint = ""
-
     case {calendar_group_id, calendar_id}
     when {Nil, Nil}
-      endpoint = "/v1.0/users/#{mailbox}/calendar/events"
+      "/v1.0/users/#{mailbox}/calendar/events"
     when {Nil, String}
-      endpoint = "/v1.0/users/#{mailbox}/calendars/#{calendar_id}/events"
+      "/v1.0/users/#{mailbox}/calendars/#{calendar_id}/events"
     when {"default", String}
-      endpoint = "/v1.0/users/#{mailbox}/calendargroup/calendars/#{calendar_id}/events"
+      "/v1.0/users/#{mailbox}/calendargroup/calendars/#{calendar_id}/events"
     when {String, String}
-      endpoint = "/v1.0/users/#{mailbox}/calendargroups/#{calendar_group_id}/calendars/#{calendar_id}/events"
+      "/v1.0/users/#{mailbox}/calendargroups/#{calendar_group_id}/calendars/#{calendar_id}/events"
+    else
+      raise "unknown endpoint"
     end
-
-    endpoint
   end
 
   private def calendar_view_path(
@@ -138,23 +137,25 @@ module Office365::Events
     calendar_group_id : String? = nil,
     calendar_id : String? = nil,
     period_start : Time = Time.local.at_beginning_of_day,
-    period_end : Time? = nil
+    period_end : Time? = nil,
+    ical_uid : String? = nil
   )
-    endpoint = ""
-
     end_period = period_end || period_start + 6.months
 
-    case {calendar_group_id, calendar_id}
-    when {Nil, Nil}
-      endpoint = "/v1.0/users/#{mailbox}/calendar/calendarView"
-    when {Nil, String}
-      endpoint = "/v1.0/users/#{mailbox}/calendars/#{calendar_id}/calendarView"
-    when {"default", String}
-      endpoint = "/v1.0/users/#{mailbox}/calendargroup/calendars/#{calendar_id}/calendarView"
-    when {String, String}
-      endpoint = "/v1.0/users/#{mailbox}/calendargroups/#{calendar_group_id}/calendars/#{calendar_id}/calendarView"
-    end
+    endpoint = case {calendar_group_id, calendar_id}
+               when {Nil, Nil}
+                 "/v1.0/users/#{mailbox}/calendar/calendarView"
+               when {Nil, String}
+                 "/v1.0/users/#{mailbox}/calendars/#{calendar_id}/calendarView"
+               when {"default", String}
+                 "/v1.0/users/#{mailbox}/calendargroup/calendars/#{calendar_id}/calendarView"
+               when {String, String}
+                 "/v1.0/users/#{mailbox}/calendargroups/#{calendar_group_id}/calendars/#{calendar_id}/calendarView"
+               else
+                 raise "unknown endpoint"
+               end
 
-    "#{endpoint}?startDateTime=#{period_start.to_s("%FT%T-00:00")}&endDateTime=#{end_period.not_nil!.to_s("%FT%T-00:00")}"
+    ical_filter = HTTP::Params.parse(ical_uid.presence ? "$filter=iCalUId eq '#{ical_uid}'" : "")
+    "#{endpoint}?startDateTime=#{period_start.to_s("%FT%T-00:00")}&endDateTime=#{end_period.not_nil!.to_s("%FT%T-00:00")}&#{ical_filter}"
   end
 end
