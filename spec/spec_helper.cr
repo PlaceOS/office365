@@ -18,6 +18,12 @@ module SpecHelper
       expires_in: 12345)
   end
 
+  def mock_mail
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/1234/sendMail")
+      .with(body: "{\"message\":{\"subject\":\"subject\",\"body\":{\"contentType\":\"Text\",\"content\":\"body\"}}}", headers: {"Authorization" => "Bearer access_token", "Content-type" => "application/json", "Prefer" => "IdType=\"ImmutableId\""})
+      .to_return(body: "")
+  end
+
   def mock_user
     Office365::User.from_json(%{{"id":"1234","mail":"foo@bar.com","displayName":"Foo Bar","userPrincipalName":"foo@bar.com"}})
   end

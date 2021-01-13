@@ -1,3 +1,4 @@
+require "./mail"
 require "./users"
 require "./groups"
 require "./events"
@@ -7,6 +8,7 @@ require "./batch_request"
 
 module Office365
   class Client
+    include Office365::Mail
     include Office365::Users
     include Office365::Groups
     include Office365::Events

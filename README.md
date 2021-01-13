@@ -9,6 +9,10 @@ Implements the Microsoft Office365 Graph API for the follow
 * User
   - list Users
   - get User
+* Groups
+  - get a group
+  - list group members
+  - list a members groups
 * Calendar
   - list Calendars
   - list Calendar Groups
@@ -28,6 +32,8 @@ Implements the Microsoft Office365 Graph API for the follow
   - create Attachment
   - get Attachment
   - delete Attachment
+* Mail
+  - send mail
 
 
 ## Installation
