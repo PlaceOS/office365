@@ -17,5 +17,9 @@ module Office365
 
     @[JSON::Field(key: "jobTitle")]
     property job_title : String?
+
+    def email
+      @mail || @user_principal_name
+    end
   end
 end
