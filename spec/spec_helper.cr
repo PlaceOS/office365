@@ -65,6 +65,11 @@ module SpecHelper
       .to_return(mock_group_query.to_json)
   end
 
+  def mock_list_groups
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups?%24orderby=displayName&%24filter=startswith%28displayName%2C+%27query%27%29&%24top=999")
+      .to_return(mock_group_query.to_json)
+  end
+
   def mock_calendar
     Office365::Calendar.from_json(%{{"id":"1234","name":"Test calendar"}})
   end

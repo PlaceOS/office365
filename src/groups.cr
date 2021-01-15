@@ -1,4 +1,37 @@
 module Office365::Groups
+  # https://docs.microsoft.com/en-us/graph/api/group-list?view=graph-rest-1.0&tabs=http
+  def list_groups_request(q : String? = nil)
+    if q.presence
+      filter_param = "startswith(displayName, '#{q}')"
+    end
+
+    query_params = {
+      "$orderby" => "displayName",
+      "$filter"  => filter_param,
+      "$top"     => "999",
+    }.compact
+
+    # This is required to do searching
+    headers = HTTP::Headers{"ConsistencyLevel" => "eventual"}
+    headers.merge! default_headers
+
+    graph_http_request(
+      request_method: "GET",
+      path: "/v1.0/groups",
+      query: query_params,
+      headers: headers
+    )
+  end
+
+  def list_groups(*args, **opts)
+    request = list_groups_request(*args, **opts)
+    list_groups graph_request(request)
+  end
+
+  def list_groups(response : HTTP::Client::Response)
+    GroupQuery.from_json response.body
+  end
+
   def get_group_request(id : String)
     graph_http_request(request_method: "GET", path: "/v1.0/groups/#{id}")
   end

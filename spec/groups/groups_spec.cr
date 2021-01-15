@@ -34,4 +34,16 @@ describe Office365::Groups do
       groups_list.value.first.display_name.should eq(SpecHelper.mock_group.display_name)
     end
   end
+
+  describe "#list_groups" do
+    it "suceeds when everything goes well" do
+      SpecHelper.mock_client_auth
+      SpecHelper.mock_list_groups
+
+      client = Office365::Client.new(**SpecHelper.mock_credentials)
+      groups_list = client.list_groups("query")
+      groups_list.value.size.should eq(1)
+      groups_list.value.first.display_name.should eq(SpecHelper.mock_group.display_name)
+    end
+  end
 end
