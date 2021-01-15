@@ -66,7 +66,7 @@ module SpecHelper
   end
 
   def mock_list_groups
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups?%24orderby=displayName&%24filter=startswith%28displayName%2C+%27query%27%29&%24top=999")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups?%24filter=startswith%28displayName%2C+%27query%27%29&%24top=950")
       .to_return(mock_group_query.to_json)
   end
 
