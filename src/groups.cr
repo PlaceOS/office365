@@ -6,9 +6,9 @@ module Office365::Groups
     end
 
     query_params = {
-      "$filter"  => filter_param,
+      "$filter" => filter_param,
       # doesn't support 999
-      "$top"     => "950",
+      "$top" => "950",
     }.compact
 
     # This is required to do searching

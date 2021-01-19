@@ -36,5 +36,15 @@ module Office365
       @odata_type = "#microsoft.graph.fileAttachment"
       @content_bytes = Base64.strict_encode(content_bytes)
     end
+
+    def initialize(@name, content_bytes : IO)
+      @odata_type = "#microsoft.graph.fileAttachment"
+      buffer = IO::Memory.new
+      buf = Bytes.new(64)
+      while ((bytes = content_bytes.read(buf)) > 0)
+        buffer.write(buf[0, bytes])
+      end
+      @content_bytes = Base64.strict_encode(buffer)
+    end
   end
 end
