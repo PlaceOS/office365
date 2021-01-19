@@ -12,6 +12,19 @@ module Office365::Users
     User.from_json response.body
   end
 
+  def get_user_manager_request(id : String)
+    graph_http_request(request_method: "GET", path: "/v1.0/users/#{id}/manager")
+  end
+
+  def get_user_manager(*args, **opts)
+    request = get_user_manager_request(*args, **opts)
+    get_user_manager graph_request(request)
+  end
+
+  def get_user_manager(response : HTTP::Client::Response)
+    get_user response
+  end
+
   def list_users_request(q : String? = nil, limit : Int32? = nil)
     if q
       queries = q.split(" ")
