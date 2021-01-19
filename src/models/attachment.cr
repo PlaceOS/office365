@@ -32,9 +32,13 @@ module Office365
 
     property size : Int32?
 
-    def initialize(@name, content_bytes : String)
+    def initialize(@name, content_bytes : String, base64_encoded : Bool = false)
       @odata_type = "#microsoft.graph.fileAttachment"
-      @content_bytes = Base64.strict_encode(content_bytes)
+      @content_bytes = if base64_encoded
+                         content_bytes
+                       else
+                         Base64.strict_encode(content_bytes)
+                       end
     end
 
     def initialize(@name, content_bytes : IO)
