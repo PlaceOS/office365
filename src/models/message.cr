@@ -59,8 +59,8 @@ module Office365
     )
       @body = Body.new(content, content_type)
       @to = to_recipient(to)
-      @cc = to_recipient(to)
-      @bcc = to_recipient(to)
+      @cc = to_recipient(cc)
+      @bcc = to_recipient(bcc)
     end
 
     protected def to_recipient(emails : Array(String) | Array(EmailAddress) | Nil) : Array(Recipient)?
