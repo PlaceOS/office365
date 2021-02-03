@@ -19,7 +19,7 @@ module Office365::Users
   end
 
   def get_user_by_mail(*args, **opts)
-    request = get_user_request(*args, **opts)
+    request = get_user_by_mail_request(*args, **opts)
     get_user_by_mail graph_request(request)
   end
 
