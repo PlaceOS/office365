@@ -14,7 +14,7 @@ module Office365::Users
 
   def get_user_by_mail_request(email : String)
     graph_http_request(request_method: "GET", path: "/v1.0/users", query: {
-      "$filter" => "mail eq '#{email}'",
+      "$filter" => "(mail eq '#{email}') or (userPrincipalName eq '#{email}')",
     })
   end
 
