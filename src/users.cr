@@ -12,6 +12,22 @@ module Office365::Users
     User.from_json response.body
   end
 
+  def get_user_by_mail_request(email : String)
+    graph_http_request(request_method: "GET", path: "/v1.0/users", query: {
+      "$filter" => "mail eq '#{email}'",
+    })
+  end
+
+  def get_user_by_mail(*args, **opts)
+    request = get_user_request(*args, **opts)
+    get_user_by_mail graph_request(request)
+  end
+
+  def get_user_by_mail(response : HTTP::Client::Response)
+    users = UserQuery.from_json response.body
+    users.value.first
+  end
+
   def get_user_manager_request(id : String)
     graph_http_request(request_method: "GET", path: "/v1.0/users/#{id}/manager")
   end
