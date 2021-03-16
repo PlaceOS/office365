@@ -44,7 +44,7 @@ module SpecHelper
   end
 
   def mock_user
-    Office365::User.from_json(%{{"id":"1234","mail":"foo@bar.com","displayName":"Foo Bar","userPrincipalName":"foo@bar.com","businessPhones":[]}})
+    Office365::User.from_json(%({"id":"1234","mail":"foo@bar.com","displayName":"Foo Bar","userPrincipalName":"foo@bar.com","businessPhones":[]}))
   end
 
   def mock_user2
@@ -88,7 +88,7 @@ module SpecHelper
   end
 
   def mock_group
-    Office365::Group.from_json(%{{"id":"1234-5678-9012","visibility":"Public","displayName":"Group Name","mailEnabled":false}})
+    Office365::Group.from_json(%({"id":"1234-5678-9012","visibility":"Public","displayName":"Group Name","mailEnabled":false}))
   end
 
   def mock_group_query
@@ -116,7 +116,7 @@ module SpecHelper
   end
 
   def mock_calendar
-    Office365::Calendar.from_json(%{{"id":"1234","name":"Test calendar"}})
+    Office365::Calendar.from_json(%({"id":"1234","name":"Test calendar"}))
   end
 
   def mock_calendar_query
@@ -134,7 +134,7 @@ module SpecHelper
   end
 
   def mock_calendar_group
-    Office365::CalendarGroup.from_json(%{{"id":"1234","name":"My Calendar Group"}})
+    Office365::CalendarGroup.from_json(%({"id":"1234","name":"My Calendar Group"}))
   end
 
   def mock_calendar_group_query
