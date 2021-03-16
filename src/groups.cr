@@ -96,7 +96,7 @@ module Office365::Groups
 
     graph_http_request(
       request_method: "GET",
-      path: "/v1.0/users/#{user_id}/memberOf/microsoft.graph.group",
+      path: "#{USERS_BASE}/#{user_id}/memberOf/microsoft.graph.group",
       query: query_params,
       headers: headers
     )

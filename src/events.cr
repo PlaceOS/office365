@@ -120,13 +120,13 @@ module Office365::Events
   )
     case {calendar_group_id, calendar_id}
     when {Nil, Nil}
-      "/v1.0/users/#{mailbox}/calendar/events"
+      "#{USERS_BASE}/#{mailbox}/calendar/events"
     when {Nil, String}
-      "/v1.0/users/#{mailbox}/calendars/#{calendar_id}/events"
+      "#{USERS_BASE}/#{mailbox}/calendars/#{calendar_id}/events"
     when {"default", String}
-      "/v1.0/users/#{mailbox}/calendargroup/calendars/#{calendar_id}/events"
+      "#{USERS_BASE}/#{mailbox}/calendargroup/calendars/#{calendar_id}/events"
     when {String, String}
-      "/v1.0/users/#{mailbox}/calendargroups/#{calendar_group_id}/calendars/#{calendar_id}/events"
+      "#{USERS_BASE}/#{mailbox}/calendargroups/#{calendar_group_id}/calendars/#{calendar_id}/events"
     else
       raise "unknown endpoint"
     end
@@ -144,13 +144,13 @@ module Office365::Events
 
     endpoint = case {calendar_group_id, calendar_id}
                when {Nil, Nil}
-                 "/v1.0/users/#{mailbox}/calendar/calendarView"
+                 "#{USERS_BASE}/#{mailbox}/calendar/calendarView"
                when {Nil, String}
-                 "/v1.0/users/#{mailbox}/calendars/#{calendar_id}/calendarView"
+                 "#{USERS_BASE}/#{mailbox}/calendars/#{calendar_id}/calendarView"
                when {"default", String}
-                 "/v1.0/users/#{mailbox}/calendargroup/calendars/#{calendar_id}/calendarView"
+                 "#{USERS_BASE}/#{mailbox}/calendargroup/calendars/#{calendar_id}/calendarView"
                when {String, String}
-                 "/v1.0/users/#{mailbox}/calendargroups/#{calendar_group_id}/calendars/#{calendar_id}/calendarView"
+                 "#{USERS_BASE}/#{mailbox}/calendargroups/#{calendar_group_id}/calendars/#{calendar_id}/calendarView"
                else
                  raise "unknown endpoint"
                end

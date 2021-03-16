@@ -1,6 +1,6 @@
 module Office365::Users
   def get_user_request(id : String)
-    graph_http_request(request_method: "GET", path: "/v1.0/users/#{id}")
+    graph_http_request(request_method: "GET", path: "#{USERS_BASE}/#{id}")
   end
 
   def get_user(*args, **opts)
@@ -13,7 +13,7 @@ module Office365::Users
   end
 
   def get_user_by_mail_request(email : String)
-    graph_http_request(request_method: "GET", path: "/v1.0/users", query: {
+    graph_http_request(request_method: "GET", path: "#{USERS_BASE}", query: {
       "$filter" => "(mail eq '#{email}') or (userPrincipalName eq '#{email}')",
     })
   end
@@ -29,7 +29,7 @@ module Office365::Users
   end
 
   def get_user_manager_request(id : String)
-    graph_http_request(request_method: "GET", path: "/v1.0/users/#{id}/manager")
+    graph_http_request(request_method: "GET", path: "#{USERS_BASE}/#{id}/manager")
   end
 
   def get_user_manager(*args, **opts)
@@ -62,7 +62,7 @@ module Office365::Users
       "$top"    => limit,
     }.compact
 
-    graph_http_request("GET", "/v1.0/users", query: query_params)
+    graph_http_request("GET", "#{USERS_BASE}", query: query_params)
   end
 
   def list_users(*args, **opts)
@@ -77,26 +77,26 @@ module Office365::Users
   end
 
   def create_user_from_json(string_or_io) : User
-    request = graph_http_request("POST", "/v1.0/users", data: string_or_io)
+    request = graph_http_request("POST", "#{USERS_BASE}", data: string_or_io)
     response = graph_request(request)
 
     get_user(response)
   end
 
   def update_user_from_json(id, string_or_io)
-    request = graph_http_request("PATCH", "/v1.0/users/#{id}", data: string_or_io)
+    request = graph_http_request("PATCH", "#{USERS_BASE}/#{id}", data: string_or_io)
     graph_request(request)
   end
 
   def delete_user(id : String)
-    request = graph_http_request("DELETE", "/v1.0/users/#{id}")
+    request = graph_http_request("DELETE", "#{USERS_BASE}/#{id}")
     graph_request(request)
   end
 
   def list_users_by_query(query : Hash(String, String)? = nil, q : String? = nil)
     # https://graph.microsoft.com/v1.0/f50e8d54-1202-4c05-a58a-4ab4331964d2/users?$filter=id in ('5e44b9ff-b1ff-4656-8b80-6a365ff3dce1', '255bcc9c-354f-4978-8b14-75ed3f6eeb06')
 
-    path = "/v1.0/users"
+    path = "#{USERS_BASE}"
 
     path += case
             when query.nil? && q.nil?

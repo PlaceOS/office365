@@ -1,6 +1,6 @@
 module Office365::Mail
   def send_mail_request(id : String, message : Message)
-    graph_http_request(request_method: "POST", path: "/v1.0/users/#{id}/sendMail", data: {message: message}.to_json)
+    graph_http_request(request_method: "POST", path: "#{USERS_BASE}/#{id}/sendMail", data: {message: message}.to_json)
   end
 
   def send_mail(*args, **opts)

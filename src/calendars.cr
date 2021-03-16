@@ -6,7 +6,7 @@ module Office365::Calendars
     when nil
       endpoint = "/v1.0/me/calendar"
     when String
-      endpoint = "/v1.0/users/#{mailbox}/calendar"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendar"
     end
 
     graph_http_request(request_method: "GET", path: endpoint.not_nil!, query: query_params)
@@ -40,11 +40,11 @@ module Office365::Calendars
     when {nil, nil}
       endpoint = "/v1.0/me/calendars"
     when {String, nil}
-      endpoint = "/v1.0/users/#{mailbox}/calendars"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendars"
     when {String, "default"}
-      endpoint = "/v1.0/users/#{mailbox}/calendarGroup/calendars"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendarGroup/calendars"
     else
-      endpoint = "/v1.0/users/#{mailbox}/calendarGroups/#{calendar_group_id}/calendars"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendarGroups/#{calendar_group_id}/calendars"
     end
 
     graph_http_request(request_method: "GET", path: endpoint, query: query_params)
@@ -68,7 +68,7 @@ module Office365::Calendars
     when nil
       endpoint = "/v1.0/me/calendarGroups"
     else
-      endpoint = "/v1.0/users/#{mailbox}/calendarGroups"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendarGroups"
     end
 
     graph_http_request(request_method: "GET", path: endpoint, query: query_params)
@@ -88,11 +88,11 @@ module Office365::Calendars
   def create_calendar_request(mailbox : String, name : String, calendar_group_id : String? = nil)
     case calendar_group_id
     when nil
-      endpoint = "/v1.0/users/#{mailbox}/calendars"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendars"
     when "default"
-      endpoint = "/v1.0/users/#{mailbox}/calendarGroup/calendars"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendarGroup/calendars"
     else
-      endpoint = "/v1.0/users/#{mailbox}/calendarGroups/#{calendar_group_id}/calendars"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendarGroups/#{calendar_group_id}/calendars"
     end
 
     graph_http_request(request_method: "POST", path: endpoint, data: {"name" => name}.to_json)
@@ -110,7 +110,7 @@ module Office365::Calendars
   end
 
   def create_calendar_group_request(mailbox : String, name : String)
-    endpoint = "/v1.0/users/#{mailbox}/calendarGroups"
+    endpoint = "#{USERS_BASE}/#{mailbox}/calendarGroups"
     graph_http_request(request_method: "POST", path: endpoint, data: {"name" => name}.to_json)
   end
 
@@ -128,11 +128,11 @@ module Office365::Calendars
   def delete_calendar_request(mailbox : String, id : String, calendar_group_id : String? = nil)
     case calendar_group_id
     when nil
-      endpoint = "/v1.0/users/#{mailbox}/calendars/#{id}"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendars/#{id}"
     when "default"
-      endpoint = "/v1.0/users/#{mailbox}/calendarGroup/calendars/#{id}"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendarGroup/calendars/#{id}"
     else
-      endpoint = "/v1.0/users/#{mailbox}/calendarGroups/#{calendar_group_id}/calendars/#{id}"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendarGroups/#{calendar_group_id}/calendars/#{id}"
     end
 
     graph_http_request(request_method: "DELETE", path: endpoint)
@@ -150,7 +150,7 @@ module Office365::Calendars
   end
 
   def delete_calendar_group_request(mailbox : String, id : String)
-    endpoint = "/v1.0/users/#{mailbox}/calendarGroups/#{id}"
+    endpoint = "#{USERS_BASE}/#{mailbox}/calendarGroups/#{id}"
     graph_http_request(request_method: "DELETE", path: endpoint)
   end
 
@@ -166,7 +166,7 @@ module Office365::Calendars
   end
 
   def get_availability_request(mailbox : String, mailboxes : Array(String), starts_at : Time, ends_at : Time)
-    endpoint = "/v1.0/users/#{mailbox}/calendar/getSchedule"
+    endpoint = "#{USERS_BASE}/#{mailbox}/calendar/getSchedule"
     data = GetAvailabilityQuery.new(mailboxes, starts_at, ends_at)
 
     graph_http_request(request_method: "POST", path: endpoint, data: data.to_json)
