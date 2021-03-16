@@ -8,11 +8,11 @@ module Office365::OData
 
   # ('value1', 'value2', ...)
   def array(values : Array(_)) : String
-    wrap(values.map { |v| "'#{v}'" }.join(", "))
+    wrap(values.join(", ") { |v| "'#{v}'" })
   end
 
   # ('value1', 'value2', ...)
   def wrap(*args) : String
-    "(" + args.map(&.to_s).join(" ") + ")"
+    "(#{args.join(" ") { |v| v.to_s }})"
   end
 end
