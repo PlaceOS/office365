@@ -5,6 +5,7 @@ require "./events"
 require "./calendars"
 require "./attachments"
 require "./batch_request"
+require "./odata"
 
 module Office365
   class Client
@@ -15,6 +16,7 @@ module Office365
     include Office365::Calendars
     include Office365::Attachments
     include Office365::BatchRequest
+    include Office365::OData
 
     LOGIN_URI    = URI.parse("https://login.microsoftonline.com")
     GRAPH_URI    = URI.parse("https://graph.microsoft.com/")
@@ -61,7 +63,7 @@ module Office365
       HTTP::Request.new(request_method, path, headers, data)
     end
 
-    private def graph_request(http_request : HTTP::Request)
+    def graph_request(http_request : HTTP::Request)
       response = ConnectProxy::HTTPClient.new(GRAPH_URI) do |client|
         client.exec(http_request)
       end
@@ -73,7 +75,7 @@ module Office365
       end
     end
 
-    private def default_headers
+    def default_headers
       HTTP::Headers{
         "Authorization" => "Bearer #{access_token}",
         "Content-type"  => "application/json",
