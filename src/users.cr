@@ -97,18 +97,11 @@ module Office365::Users
     # https://graph.microsoft.com/v1.0/f50e8d54-1202-4c05-a58a-4ab4331964d2/users?$filter=id in ('5e44b9ff-b1ff-4656-8b80-6a365ff3dce1', '255bcc9c-354f-4978-8b14-75ed3f6eeb06')
 
     path = "#{USERS_BASE}"
-
-    path += case
-            when query.nil? && q.nil?
-              ""
-            when !query.nil? && q.nil?
-              "?#{query.map { |k, v| HTTP::Params.parse("#{k}=#{v}") }.join("&")}"
-            when query.nil? && !q.nil?
-              "?#{q}"
-            when !query.nil? && !q.nil?
-              "?#{query.map { |k, v| HTTP::Params.parse("#{k}=#{v}") }.join("&")}" + " and #{q}"
-            else
-              ""
+    path += case {query, q}
+            in {Hash(String, String), String} then "?#{HTTP::Params.encode(query)} and #{q}"
+            in {Hash(String, String), Nil}    then "?#{HTTP::Params.encode(query)}"
+            in {Nil, String}                  then "?#{q}"
+            in {Nil, Nil}                     then ""
             end
 
     request = HTTP::Request.new("GET", path, self.default_headers)
