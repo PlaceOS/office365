@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/PlaceOS/office365.svg?branch=master)](https://travis-ci.com/PlaceOS/office365)
+[![Crystal CI](https://github.com/PlaceOS/office365/actions/workflows/crystal.yml/badge.svg)](https://github.com/PlaceOS/office365/actions/workflows/crystal.yml)
 
 # office365
 
