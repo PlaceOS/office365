@@ -115,13 +115,13 @@ module Office365::Attachments
 
     case {calendar_group_id, calendar_id}
     when {Nil, Nil}
-      endpoint = "/v1.0/users/#{mailbox}/calendar/events/#{event_id}/attachments"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendar/events/#{event_id}/attachments"
     when {Nil, String}
-      endpoint = "/v1.0/users/#{mailbox}/calendars/#{calendar_id}/events/#{event_id}/attachments"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendars/#{calendar_id}/events/#{event_id}/attachments"
     when {"default", String}
-      endpoint = "/v1.0/users/#{mailbox}/calendargroup/calendars/#{calendar_id}/events/#{event_id}/attachments"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendargroup/calendars/#{calendar_id}/events/#{event_id}/attachments"
     when {String, String}
-      endpoint = "/v1.0/users/#{mailbox}/calendargroups/#{calendar_group_id}/calendars/#{calendar_id}/events/#{event_id}/attachments"
+      endpoint = "#{USERS_BASE}/#{mailbox}/calendargroups/#{calendar_group_id}/calendars/#{calendar_id}/events/#{event_id}/attachments"
     end
 
     endpoint

@@ -24,8 +24,48 @@ module SpecHelper
       .to_return(body: "")
   end
 
+  def mock_create_user_request_body
+    {
+      accountEnabled:    true,
+      displayName:       "Adele Vance",
+      mailNickname:      "AdeleV",
+      userPrincipalName: "adelevancetest@testing.onmicrosoft.com",
+      passwordProfile:   {
+        forceChangePasswordNextSignIn: true,
+        password:                      "xWwvJ]6NMw+bWH-d",
+      },
+    }
+  end
+
+  def mock_update_user_request_body
+    {
+      displayName: "Maria Valance",
+    }
+  end
+
   def mock_user
-    Office365::User.from_json(%{{"id":"1234","mail":"foo@bar.com","displayName":"Foo Bar","userPrincipalName":"foo@bar.com"}})
+    Office365::User.from_json(%({"id":"1234","mail":"foo@bar.com","displayName":"Foo Bar","userPrincipalName":"foo@bar.com","businessPhones":[]}))
+  end
+
+  def mock_user2
+    Office365::User.from_json(%({"@odata.context":"https://graph.microsoft.com/v1.0/$metadata#users/$entity","id":"0faa49e2-0602-41c2-8a7b-1438333c0af1","businessPhones":[],"displayName":"Adele Vance","givenName":null,"jobTitle":null,"mail":null,"mobilePhone":null,"officeLocation":null,"preferredLanguage":null,"surname":null,"userPrincipalName":"adelevancetest@testing.onmicrosoft.com"}))
+  end
+
+  def mock_create_user
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users")
+      .with(body: mock_create_user_request_body.to_json)
+      .to_return(body: mock_user2.to_json)
+  end
+
+  def mock_update_user
+    WebMock.stub(:patch, "https://graph.microsoft.com/v1.0/users/0faa49e2-0602-41c2-8a7b-1438333c0af1")
+      .with(body: mock_update_user_request_body.to_json)
+      .to_return(status: 204)
+  end
+
+  def mock_delete_user
+    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/0faa49e2-0602-41c2-8a7b-1438333c0af1")
+      .to_return(status: 204)
   end
 
   def mock_user_query
@@ -42,8 +82,13 @@ module SpecHelper
       .to_return(mock_user_query.to_json)
   end
 
+  def mock_list_users_with_query
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users?%24filter=%28id+in+%28%271234-5678-9012%27%2C+%271234-5678-5435%27%29%29")
+      .to_return(mock_user_query.to_json)
+  end
+
   def mock_group
-    Office365::Group.from_json(%{{"id":"1234-5678-9012","visibility":"Public","displayName":"Group Name","mailEnabled":false}})
+    Office365::Group.from_json(%({"id":"1234-5678-9012","visibility":"Public","displayName":"Group Name","mailEnabled":false}))
   end
 
   def mock_group_query
@@ -71,7 +116,7 @@ module SpecHelper
   end
 
   def mock_calendar
-    Office365::Calendar.from_json(%{{"id":"1234","name":"Test calendar"}})
+    Office365::Calendar.from_json(%({"id":"1234","name":"Test calendar"}))
   end
 
   def mock_calendar_query
@@ -89,7 +134,7 @@ module SpecHelper
   end
 
   def mock_calendar_group
-    Office365::CalendarGroup.from_json(%{{"id":"1234","name":"My Calendar Group"}})
+    Office365::CalendarGroup.from_json(%({"id":"1234","name":"My Calendar Group"}))
   end
 
   def mock_calendar_group_query
