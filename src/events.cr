@@ -139,7 +139,7 @@ module Office365::Events
     period_start : Time = Time.local.at_beginning_of_day,
     period_end : Time? = nil,
     ical_uid : String? = nil,
-    top : UInt16? = 10000
+    top : Int? = 10000
   )
     end_period = period_end || period_start + 6.months
 
