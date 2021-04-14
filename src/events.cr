@@ -158,6 +158,8 @@ module Office365::Events
 
     ical_filter = HTTP::Params.parse(ical_uid.presence ? "$filter=iCalUId eq '#{ical_uid}'" : "").to_s
     ical_filter = "&#{ical_filter}" unless ical_filter.empty?
-    "#{endpoint}?startDateTime=#{period_start.to_s("%FT%T-00:00")}&endDateTime=#{end_period.not_nil!.to_s("%FT%T-00:00")}#{ical_filter}&$top=#{top}"
+    path = "#{endpoint}?startDateTime=#{period_start.to_s("%FT%T-00:00")}&endDateTime=#{end_period.not_nil!.to_s("%FT%T-00:00")}#{ical_filter}"
+    path += "&$top=#{top}" unless top.nil?
+    path
   end
 end
