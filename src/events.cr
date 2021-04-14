@@ -138,7 +138,8 @@ module Office365::Events
     calendar_id : String? = nil,
     period_start : Time = Time.local.at_beginning_of_day,
     period_end : Time? = nil,
-    ical_uid : String? = nil
+    ical_uid : String? = nil,
+    top : Int32? = 10000
   )
     end_period = period_end || period_start + 6.months
 
@@ -157,6 +158,8 @@ module Office365::Events
 
     ical_filter = HTTP::Params.parse(ical_uid.presence ? "$filter=iCalUId eq '#{ical_uid}'" : "").to_s
     ical_filter = "&#{ical_filter}" unless ical_filter.empty?
-    "#{endpoint}?startDateTime=#{period_start.to_s("%FT%T-00:00")}&endDateTime=#{end_period.not_nil!.to_s("%FT%T-00:00")}#{ical_filter}"
+    path = "#{endpoint}?startDateTime=#{period_start.to_s("%FT%T-00:00")}&endDateTime=#{end_period.not_nil!.to_s("%FT%T-00:00")}#{ical_filter}"
+    path += "&$top=#{top}" unless top.nil?
+    path
   end
 end
