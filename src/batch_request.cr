@@ -4,8 +4,9 @@ module Office365::BatchRequest
 
     responses = {} of HTTP::Request => HTTP::Client::Response
 
-    # Maximum of 50 requests per-batch
-    requests.each_slice(50, reuse: true) do |requests_slice|
+    # Maximum of 20 requests per-batch
+    # https://docs.microsoft.com/en-us/graph/known-issues#limit-on-batch-size
+    requests.each_slice(20, reuse: true) do |requests_slice|
       payload_request_arr = [] of RequestParam
 
       requests_slice.each_with_index do |request, id|
