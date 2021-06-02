@@ -1,7 +1,7 @@
 name: office365
-version: 1.13.3
+version: 1.13.4
 
-crystal: ">= 0.36.1, < 2.0.0"
+crystal: ">= 0.36.1"
 
 dependencies:
   connect-proxy:
