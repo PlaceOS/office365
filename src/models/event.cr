@@ -111,7 +111,7 @@ module Office365
       if typeof(location) == String
         # Use the provided location
         @location = Location.new(display_name: location)
-        @locations = [@location].not_nil!
+        @locations = [@location.not_nil!]
       else
         # Generate location based on invited resources
         @locations = @attendees.compact_map { |a| Location.new(display_name: a.name) if a.type == AttendeeType::Resource }
