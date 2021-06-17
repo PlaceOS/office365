@@ -115,7 +115,7 @@ module Office365
       else
         # Generate location based on invited resources
         @locations = locations = @attendees.compact_map { |a| Location.new(display_name: a.name) if a.type == AttendeeType::Resource }
-        @location = Location.new(display_name: locations.join("; "))
+        @location = locations.first
       end
 
       if recurrence
