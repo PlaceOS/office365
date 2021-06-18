@@ -108,7 +108,7 @@ module Office365
 
       # As outlined in the example request
       # https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#request-1
-      if typeof(location) == String
+      if location.is_a? String
         # Use the provided location
         @location = Location.new(display_name: location)
         @locations = [@location.not_nil!]
