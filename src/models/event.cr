@@ -108,11 +108,14 @@ module Office365
 
       # As outlined in the example request
       # https://docs.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http#request-1
-      @locations = locs = @attendees.compact_map { |a| Location.new(display_name: a.name) if a.type == AttendeeType::Resource }
-      if typeof(location) == String
+      if location.is_a? String
+        # Use the provided location
         @location = Location.new(display_name: location)
-      elsif !locs.empty?
-        @location = Location.new(display_name: locs.compact_map(&.display_name).join("; "))
+        @locations = [@location.not_nil!]
+      else
+        # Generate location based on invited resources
+        @locations = locations = @attendees.compact_map { |a| Location.new(display_name: a.name) if a.type.resource? }
+        @location = locations.first
       end
 
       if recurrence
