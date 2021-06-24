@@ -141,7 +141,7 @@ module Office365
     end
 
     def rooms
-      @attendees.select { |a| a.type == AttendeeType::Resource }
+      @attendees.select(&.type.==(AttendeeType::Resource))
     end
 
     def is_private?

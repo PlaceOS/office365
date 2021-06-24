@@ -13,6 +13,6 @@ module Office365::OData
 
   # ('value1', 'value2', ...)
   def wrap(*args) : String
-    "(#{args.join(" ") { |v| v.to_s }})"
+    "(#{args.join(" ", &.to_s)})"
   end
 end

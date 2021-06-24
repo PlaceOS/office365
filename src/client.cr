@@ -59,7 +59,7 @@ module Office365
       headers : HTTP::Headers = default_headers
     ) : HTTP::Request
       if query
-        path = "#{path}?#{query.map { |k, v| HTTP::Params.parse("#{k}=#{v}") }.join("&")}"
+        path = "#{path}?#{query.join('&') { |k, v| HTTP::Params.parse("#{k}=#{v}") }}"
       end
 
       HTTP::Request.new(request_method, path, headers, data)

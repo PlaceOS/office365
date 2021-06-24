@@ -11,7 +11,8 @@ module Office365::BatchRequest
 
       requests_slice.each_with_index do |request, id|
         body = request.body ? JSON.parse(request.body.not_nil!) : nil
-        payload_request_arr << RequestParam.new(id: id, method: request.method, url: request.resource, body: body)
+        request.headers.delete("Authorization") # not required for indiviual requests in a batch
+        payload_request_arr << RequestParam.new(id: id, method: request.method, url: request.resource, body: body, headers: request.headers)
       end
 
       req_body = {"requests": payload_request_arr}
@@ -54,8 +55,9 @@ module Office365::BatchRequest
     property method : String
     property url : String
     property body : JSON::Any?
+    property headers : HTTP::Headers?
 
-    def initialize(@id, @method, url, @body = nil)
+    def initialize(@id, @method, url, @body = nil, @headers = nil)
       # Dont need to pass api version in the url
       @url = url.gsub("/v1.0", "")
     end
