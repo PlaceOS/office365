@@ -93,7 +93,7 @@ module Office365::Groups
     # This is required to do searching
     headers = HTTP::Headers{"ConsistencyLevel" => "eventual"}
     headers.merge! default_headers
-    
+
     member_of = transitive ? "transitiveMemberOf" : "memberOf"
 
     graph_http_request(
