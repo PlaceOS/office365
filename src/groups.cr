@@ -78,8 +78,8 @@ module Office365::Groups
     UserQuery.from_json response.body
   end
 
-  # MembersOf Request, what groups a user is in
-  def groups_member_of_request(user_id : String, q : String? = nil)
+  # MemberOf Request, what groups a user is in (defaults to including nested groups)
+  def groups_member_of_request(user_id : String, q : String? = nil, transitive : Bool? = true)
     if q.presence
       filter_param = %("displayName:#{q}")
     end
@@ -93,10 +93,12 @@ module Office365::Groups
     # This is required to do searching
     headers = HTTP::Headers{"ConsistencyLevel" => "eventual"}
     headers.merge! default_headers
+    
+    member_of = transitive ? "transitiveMemberOf" : "memberOf"
 
     graph_http_request(
       request_method: "GET",
-      path: "#{USERS_BASE}/#{user_id}/memberOf/microsoft.graph.group",
+      path: "#{USERS_BASE}/#{user_id}/#{member_of}/microsoft.graph.group",
       query: query_params,
       headers: headers
     )
