@@ -37,6 +37,9 @@ module Office365
     @[JSON::Field(key: "tollNumber")]
     property toll_number : String?
 
+    @[JSON::Field(key: "tollFreeNumbers")]
+    property toll_free_numbers : Array(String)?
+
     @[JSON::Field(key: "quickDial")]
     property quick_dial : String?
   end
@@ -190,8 +193,13 @@ module Office365
       end
     end
 
-    def online_meeting_phone
-      @online_meeting.try &.quick_dial || @online_meeting.try &.toll_number
+    def online_meeting_phones
+      meet = @online_meeting
+      [
+        meet.try &.quick_dial,
+        meet.try &.toll_free_numbers,
+        meet.try &.toll_number,
+      ].compact.flatten
     end
 
     def online_meeting_id
