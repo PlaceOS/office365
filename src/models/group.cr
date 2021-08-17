@@ -1,6 +1,7 @@
 module Office365
   class Group
     include JSON::Serializable
+    include JSON::Serializable::Unmapped
 
     property id : String
     property description : String?

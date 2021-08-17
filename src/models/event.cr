@@ -23,8 +23,27 @@ module Office365
     end
   end
 
+  # Readonly meeting details
+  class OnlineMeeting
+    include JSON::Serializable
+    include JSON::Serializable::Unmapped
+
+    @[JSON::Field(key: "joinUrl")]
+    property join_url : String
+
+    @[JSON::Field(key: "conferenceId")]
+    property conference_id : String
+
+    @[JSON::Field(key: "tollNumber")]
+    property toll_number : String?
+
+    @[JSON::Field(key: "quickDial")]
+    property quick_dial : String?
+  end
+
   class Event
     include JSON::Serializable
+    include JSON::Serializable::Unmapped
 
     @[JSON::Field(key: "start", converter: Office365::DateTimeTimeZone)]
     property starts_at : Time?
@@ -53,8 +72,14 @@ module Office365
     @[JSON::Field(key: "onlineMeetingProvider")]
     property online_meeting_provider : String?
 
+    @[JSON::Field(key: "onlineMeetingUrl")]
+    property online_meeting_url : String?
+
     @[JSON::Field(key: "isOnlineMeeting")]
     property is_online_meeting : Bool?
+
+    @[JSON::Field(key: "onlineMeeting")]
+    property online_meeting : OnlineMeeting?
 
     property id : String?
     property subject : String?
@@ -155,6 +180,22 @@ module Office365
     def set_recurrence(recurrence)
       @recurrence = PatternedRecurrence.build(recurrence_start_date: @starts_at.not_nil!,
         recurrence: recurrence)
+    end
+
+    def online_meeting_url
+      if meeting = @online_meeting
+        meeting.join_url
+      else
+        @online_meeting_url
+      end
+    end
+
+    def online_meeting_phone
+      @online_meeting.try &.quick_dial || @online_meeting.try &.toll_number
+    end
+
+    def online_meeting_id
+      @online_meeting.try &.conference_id
     end
   end
 end

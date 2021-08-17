@@ -2,6 +2,7 @@ module Office365
   # https://docs.microsoft.com/en-us/graph/api/resources/users?view=graph-rest-1.0#common-properties
   class User
     include JSON::Serializable
+    include JSON::Serializable::Unmapped
 
     # Common Properties
     property id : String

@@ -1,5 +1,6 @@
 class Office365::Calendar
   include JSON::Serializable
+  include JSON::Serializable::Unmapped
 
   @[JSON::Field(key: "canEdit")]
   property? can_edit : Bool?

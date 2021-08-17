@@ -1,6 +1,7 @@
 module Office365
   class Contact
     include JSON::Serializable
+    include JSON::Serializable::Unmapped
 
     property id : String
     property title : String

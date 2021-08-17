@@ -11,6 +11,7 @@ module Office365
 
   class Attendee
     include JSON::Serializable
+    include JSON::Serializable::Unmapped
 
     property type : AttendeeType
 

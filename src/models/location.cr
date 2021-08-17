@@ -1,5 +1,6 @@
 class Office365::Location
   include JSON::Serializable
+  include JSON::Serializable::Unmapped
 
   property address : PhysicalAddress?
 
