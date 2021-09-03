@@ -19,7 +19,7 @@ class Office365::EventQuery
       error_message = parsed_error_message ? "Query not in the correct query format\nOffice365 Error: #{parsed_error_message}" : "Query not in the correct query format, no error message available"
       raise JSON::Error.new error_message
     else
-      raise JSON::Error.new "Query not in the correct query format, no error message available"
+      raise JSON::Error.new "Unhandled EventQuery format: #{data}"
     end
   end
 end
