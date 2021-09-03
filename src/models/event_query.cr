@@ -14,7 +14,7 @@ class Office365::EventQuery
         Event.from_json(event.to_json)
       end
       new(value: result)
-    else # error reponse
+    else
       raise JSON::Error.new "Query not in the correct query format\nOffice365 Error: #{parsed_data["error"]["message"]}"
     end
   end
