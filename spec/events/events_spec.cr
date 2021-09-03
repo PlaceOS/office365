@@ -11,7 +11,7 @@ describe Office365::Events do
       list.value.size.should eq(1)
       list.value.first.subject.should eq(SpecHelper.mock_event.subject)
     end
-    it "suceeds when everything goes well when we batch requests" do
+    it "succeeds when everything goes well when we batch requests" do
       SpecHelper.mock_client_auth
       SpecHelper.mock_list_events
       SpecHelper.mock_batch_list_events
@@ -26,6 +26,16 @@ describe Office365::Events do
       event = client.get_event(results[request_2])
       event.subject.should eq(SpecHelper.mock_event.subject)
       event.response_status.not_nil!.response.should eq(SpecHelper.mock_event.response_status.not_nil!.response)
+    end
+
+    it "raises an error when query is incorrectly formatted" do
+      expect_raises(Exception) do
+        SpecHelper.mock_client_auth
+        SpecHelper.mock_list_events_error
+
+        client = Office365::Client.new(**SpecHelper.mock_credentials)
+        client.list_events(mailbox: "bar@foo.com", period_start: Time.utc(2020, 1, 1, 0, 0), period_end: Time.utc(2020, 6, 1, 0, 0))
+      end
     end
   end
 

@@ -232,6 +232,16 @@ module SpecHelper
     }.to_json
   end
 
+  def mock_event_query_json_error
+    {
+      "error": {"@odata.type": {
+        "code":       "string",
+        "message":    "string",
+        "innererror": {"@odata.type": "odata.error"},
+      }},
+    }.to_json
+  end
+
   def mock_batch_event_list_json
     {
       "responses" => [
@@ -254,6 +264,11 @@ module SpecHelper
 
   def mock_list_events
     WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/calendarView?startDateTime=2020-01-01T00:00:00-00:00&endDateTime=2020-06-01T00:00:00-00:00&$top=10000").to_return(mock_event_query_json)
+  end
+
+  def mock_list_events_error
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/bar@foo.com/calendar/calendarView?startDateTime=2020-01-01T00:00:00-00:00&endDateTime=2020-06-01T00:00:00-00:00&$top=10000")
+      .to_return(mock_event_query_json_error)
   end
 
   def mock_batch_list_events
