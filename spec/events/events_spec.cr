@@ -29,7 +29,7 @@ describe Office365::Events do
     end
 
     it "raises an error when query is incorrectly formatted" do
-      expect_raises(Exception) do
+      expect_raises(JSON::Error) do
         SpecHelper.mock_client_auth
         SpecHelper.mock_list_events_error
 

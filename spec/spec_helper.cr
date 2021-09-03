@@ -234,11 +234,14 @@ module SpecHelper
 
   def mock_event_query_json_error
     {
-      "error": {"@odata.type": {
-        "code":       "string",
-        "message":    "string",
-        "innererror": {"@odata.type": "odata.error"},
-      }},
+      "error": {
+        "code":       "invalidRange",
+        "message":    "Uploaded fragment overlaps with existing data.",
+        "innerError": {
+          "requestId": "request-id",
+          "date":      "date-time",
+        },
+      },
     }.to_json
   end
 
