@@ -94,7 +94,7 @@ module Office365
     end
   end
 
-  class Exception < ::Exception
+  class Exception < ::RuntimeError
     property http_status : HTTP::Status
     property http_body : String
 
