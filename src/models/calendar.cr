@@ -17,6 +17,9 @@ class Office365::Calendar
   @[JSON::Field(key: "isDefaultCalendar")]
   property? is_default_calendar : Bool?
 
+  @[JSON::Field(key: "isRemovable")]
+  property? is_removable : Bool?
+
   property color : String?
   property id : String
   property name : String

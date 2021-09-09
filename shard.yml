@@ -1,5 +1,5 @@
 name: office365
-version: 1.13.12
+version: 1.13.13
 
 crystal: ">= 0.36.1"
 
