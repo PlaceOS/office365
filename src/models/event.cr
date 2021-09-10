@@ -29,10 +29,10 @@ module Office365
     include JSON::Serializable::Unmapped
 
     @[JSON::Field(key: "joinUrl")]
-    property join_url : String
+    property join_url : String?
 
     @[JSON::Field(key: "conferenceId")]
-    property conference_id : String
+    property conference_id : String?
 
     @[JSON::Field(key: "tollNumber")]
     property toll_number : String?
