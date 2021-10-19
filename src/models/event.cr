@@ -54,6 +54,12 @@ module Office365
     @[JSON::Field(key: "end", converter: Office365::DateTimeTimeZone)]
     property ends_at : Time?
 
+    @[JSON::Field(key: "createdDateTime")]
+    property created : Time? = nil
+
+    @[JSON::Field(key: "lastModifiedDateTime")]
+    property updated : Time? = nil
+
     @[JSON::Field(key: "iCalUId")]
     property icaluid : String?
 
