@@ -71,7 +71,7 @@ module Office365
           "client_id=#{@client_id}&response_type=code&scope=#{URI.encode(@scope)}"
         )
       end
-      raise "error fething authorisation code #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+      raise "error fetching authorisation code #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
 
       authorisation_response = Hash(String, String).from_json response.body
       authorisation_response["code"]
