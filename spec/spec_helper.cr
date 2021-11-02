@@ -17,7 +17,7 @@ module SpecHelper
       .to_return({code: "M0ab92efe-b6fd-df08-87dc-2c6500a7f84d"}.to_json)
 
     WebMock.stub(:post, "https://login.microsoftonline.com/tentant/oauth2/v2.0/token")
-      .with(body: "client_id=client_id&scope=user.read%20mail.read&code=M0ab92efe-b6fd-df08-87dc-2c6500a7f84d&client_secret=client_secret&grant_type=client_credentials", headers: {"Content-Type" => "application/x-www-form-urlencoded"})
+      .with(body: "client_id=client_id&scope=user.read+mail.read&code=M0ab92efe-b6fd-df08-87dc-2c6500a7f84d&client_secret=client_secret&grant_type=client_credentials", headers: {"Content-Type" => "application/x-www-form-urlencoded"})
       .to_return(mock_token.to_json)
   end
 

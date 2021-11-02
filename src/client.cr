@@ -22,22 +22,34 @@ module Office365
 
     LOGIN_URI     = URI.parse("https://login.microsoftonline.com")
     GRAPH_URI     = URI.parse("https://graph.microsoft.com/")
-    TOKENS_CACHE  = {} of String => Token
     DEFAULT_SCOPE = "https://graph.microsoft.com/.default"
+
+    getter token_cache = {} of String => Token
 
     def initialize(@tenant : String, @client_id : String, @client_secret : String, @scope : String = DEFAULT_SCOPE)
     end
 
     def get_token : Token
-      existing = TOKENS_CACHE[token_lookup]?
+      existing = token_cache[token_lookup]?
       return existing if existing && existing.current?
 
       response = ConnectProxy::HTTPClient.new(LOGIN_URI) do |client|
         if @scope != DEFAULT_SCOPE
           code = get_delegated_code
-          params = "client_id=#{@client_id}&scope=#{URI.encode(@scope)}&code=#{code}&client_secret=#{@client_secret}&grant_type=client_credentials"
+          params = HTTP::Params{
+            "client_id"     => @client_id,
+            "scope"         => @scope,
+            "code"          => code,
+            "client_secret" => @client_secret,
+            "grant_type"    => "client_credentials",
+          }
         else
-          params = "client_id=#{@client_id}&scope=#{URI.encode(@scope)}&client_secret=#{@client_secret}&grant_type=client_credentials"
+          params = HTTP::Params{
+            "client_id"     => @client_id,
+            "scope"         => @scope,
+            "client_secret" => @client_secret,
+            "grant_type"    => "client_credentials",
+          }
         end
 
         client.exec(
@@ -46,13 +58,13 @@ module Office365
           HTTP::Headers{
             "Content-Type" => "application/x-www-form-urlencoded",
           },
-          params
+          params.to_s
         )
       end
 
       if response.success?
         token = Token.from_json response.body
-        TOKENS_CACHE[token_lookup] = token
+        token_cache[token_lookup] = token
         token
       else
         raise "error fetching token #{response.status} (#{response.status_code})\n#{response.body}"
