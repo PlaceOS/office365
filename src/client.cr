@@ -20,11 +20,12 @@ module Office365
     include Office365::BatchRequest
     include Office365::OData
 
-    LOGIN_URI    = URI.parse("https://login.microsoftonline.com")
-    GRAPH_URI    = URI.parse("https://graph.microsoft.com/")
-    TOKENS_CACHE = {} of String => Token
+    LOGIN_URI     = URI.parse("https://login.microsoftonline.com")
+    GRAPH_URI     = URI.parse("https://graph.microsoft.com/")
+    TOKENS_CACHE  = {} of String => Token
+    DEFAULT_SCOPE = "https://graph.microsoft.com/.default"
 
-    def initialize(@tenant : String, @client_id : String, @client_secret : String, @scope : String = "https://graph.microsoft.com/.default")
+    def initialize(@tenant : String, @client_id : String, @client_secret : String, @scope : String = DEFAULT_SCOPE)
     end
 
     def get_token : Token
@@ -32,13 +33,20 @@ module Office365
       return existing if existing && existing.current?
 
       response = ConnectProxy::HTTPClient.new(LOGIN_URI) do |client|
+        if @scope == DEFAULT_SCOPE
+          params = "client_id=#{@client_id}&scope=#{URI.encode(@scope)}&client_secret=#{@client_secret}&grant_type=client_credentials"
+        else
+          code = get_delegated_code
+          params = "client_id=#{@client_id}&scope=#{URI.encode(@scope)}&code=#{code}&client_secret=#{@client_secret}&grant_type=client_credentials"
+        end
+
         client.exec(
           "POST",
           "/#{@tenant}/oauth2/v2.0/token",
           HTTP::Headers{
             "Content-Type" => "application/x-www-form-urlencoded",
           },
-          "client_id=#{@client_id}&scope=#{URI.encode(@scope)}&client_secret=#{@client_secret}&grant_type=client_credentials"
+          params
         )
       end
 
@@ -49,6 +57,24 @@ module Office365
       else
         raise "error fetching token #{response.status} (#{response.status_code})\n#{response.body}"
       end
+    end
+
+    # https://docs.microsoft.com/en-us/graph/auth-v2-user
+    private def get_delegated_code
+      response = ConnectProxy::HTTPClient.new(LOGIN_URI) do |client|
+        client.exec(
+          "POST",
+          "/#{@tenant}/oauth2/v2.0/token",
+          HTTP::Headers{
+            "Content-Type" => "application/x-www-form-urlencoded",
+          },
+          "client_id=#{@client_id}&response_type=code&scope=#{URI.encode(@scope)}"
+        )
+      end
+      raise "error fething authorisation code #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+
+      authorisation_response = Hash(String, String).from_json response.body
+      authorisation_response["code"]
     end
 
     def graph_http_request(
