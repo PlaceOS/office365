@@ -33,11 +33,11 @@ module Office365
       return existing if existing && existing.current?
 
       response = ConnectProxy::HTTPClient.new(LOGIN_URI) do |client|
-        if @scope == DEFAULT_SCOPE
-          params = "client_id=#{@client_id}&scope=#{URI.encode(@scope)}&client_secret=#{@client_secret}&grant_type=client_credentials"
-        else
+        if @scope != DEFAULT_SCOPE
           code = get_delegated_code
           params = "client_id=#{@client_id}&scope=#{URI.encode(@scope)}&code=#{code}&client_secret=#{@client_secret}&grant_type=client_credentials"
+        else
+          params = "client_id=#{@client_id}&scope=#{URI.encode(@scope)}&client_secret=#{@client_secret}&grant_type=client_credentials"
         end
 
         client.exec(
