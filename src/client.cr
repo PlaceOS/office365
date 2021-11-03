@@ -24,13 +24,13 @@ module Office365
     GRAPH_URI     = URI.parse("https://graph.microsoft.com/")
     DEFAULT_SCOPE = "https://graph.microsoft.com/.default"
 
-    getter token_cache = {} of String => Token
+    class_getter token_cache = {} of String => Token
 
     def initialize(@tenant : String, @client_id : String, @client_secret : String, @scope : String = DEFAULT_SCOPE)
     end
 
     def get_token : Token
-      existing = token_cache[token_lookup]?
+      existing = self.class.token_cache[token_lookup]?
       return existing if existing && existing.current?
 
       response = ConnectProxy::HTTPClient.new(LOGIN_URI) do |client|
@@ -55,7 +55,7 @@ module Office365
 
       if response.success?
         token = Token.from_json response.body
-        token_cache[token_lookup] = token
+        self.class.token_cache[token_lookup] = token
         token
       else
         raise "error fetching token #{response.status} (#{response.status_code})\n#{response.body}"
