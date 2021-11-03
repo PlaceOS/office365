@@ -34,23 +34,14 @@ module Office365
       return existing if existing && existing.current?
 
       response = ConnectProxy::HTTPClient.new(LOGIN_URI) do |client|
-        if @scope != DEFAULT_SCOPE
-          code = get_delegated_code
-          params = HTTP::Params{
-            "client_id"     => @client_id,
-            "scope"         => @scope,
-            "code"          => code,
-            "client_secret" => @client_secret,
-            "grant_type"    => "client_credentials",
-          }
-        else
-          params = HTTP::Params{
-            "client_id"     => @client_id,
-            "scope"         => @scope,
-            "client_secret" => @client_secret,
-            "grant_type"    => "client_credentials",
-          }
-        end
+        params = HTTP::Params{
+          "client_id"     => @client_id,
+          "scope"         => @scope,
+          "client_secret" => @client_secret,
+          "grant_type"    => "client_credentials",
+        }
+
+        params["code"] = get_delegated_code unless @scope == DEFAULT_SCOPE
 
         client.exec(
           "POST",
@@ -74,13 +65,18 @@ module Office365
     # https://docs.microsoft.com/en-us/graph/auth-v2-user
     private def get_delegated_code
       response = ConnectProxy::HTTPClient.new(LOGIN_URI) do |client|
+        params = HTTP::Params{
+          "client_id"     => @client_id,
+          "response_type" => "code",
+          "scope"         => @scope,
+        }
         client.exec(
           "POST",
           "/#{@tenant}/oauth2/v2.0/token",
           HTTP::Headers{
             "Content-Type" => "application/x-www-form-urlencoded",
           },
-          "client_id=#{@client_id}&response_type=code&scope=#{URI.encode(@scope)}"
+          params.to_s
         )
       end
       raise "error fetching authorisation code #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
