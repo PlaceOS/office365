@@ -11,6 +11,16 @@ module SpecHelper
       .to_return(mock_token.to_json)
   end
 
+  def mock_delegated_client_auth
+    WebMock.stub(:post, "https://login.microsoftonline.com/tentant/oauth2/v2.0/token")
+      .with(body: "client_id=client_id&response_type=code&scope=user.read+mail.read", headers: {"Content-Type" => "application/x-www-form-urlencoded"})
+      .to_return({code: "M0ab92efe-b6fd-df08-87dc-2c6500a7f84d"}.to_json)
+
+    WebMock.stub(:post, "https://login.microsoftonline.com/tentant/oauth2/v2.0/token")
+      .with(body: "client_id=client_id&scope=user.read+mail.read&client_secret=client_secret&grant_type=client_credentials&code=M0ab92efe-b6fd-df08-87dc-2c6500a7f84d", headers: {"Content-Type" => "application/x-www-form-urlencoded"})
+      .to_return(mock_token.to_json)
+  end
+
   def mock_token
     Office365::Token.new(
       access_token: "access_token",

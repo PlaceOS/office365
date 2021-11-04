@@ -20,35 +20,75 @@ module Office365
     include Office365::BatchRequest
     include Office365::OData
 
-    LOGIN_URI    = URI.parse("https://login.microsoftonline.com")
-    GRAPH_URI    = URI.parse("https://graph.microsoft.com/")
-    TOKENS_CACHE = {} of String => Token
+    LOGIN_URI     = URI.parse("https://login.microsoftonline.com")
+    GRAPH_URI     = URI.parse("https://graph.microsoft.com/")
+    DEFAULT_SCOPE = "https://graph.microsoft.com/.default"
 
-    def initialize(@tenant : String, @client_id : String, @client_secret : String, @scope : String = "https://graph.microsoft.com/.default")
+    class_getter token_cache = {} of String => Token
+
+    def initialize(@tenant : String, @client_id : String, @client_secret : String, @scope : String = DEFAULT_SCOPE)
     end
 
     def get_token : Token
-      existing = TOKENS_CACHE[token_lookup]?
-      return existing if existing && existing.current?
+      existing = self.class.token_cache[token_lookup]?
+      if existing
+        if !existing.current?
+          self.class.token_cache.delete(token_lookup)
+        else
+          return existing
+        end
+      end
 
       response = ConnectProxy::HTTPClient.new(LOGIN_URI) do |client|
+        params = HTTP::Params{
+          "client_id"     => @client_id,
+          "scope"         => @scope,
+          "client_secret" => @client_secret,
+          "grant_type"    => "client_credentials",
+        }
+
+        params["code"] = get_delegated_code unless @scope == DEFAULT_SCOPE
+
         client.exec(
           "POST",
           "/#{@tenant}/oauth2/v2.0/token",
           HTTP::Headers{
             "Content-Type" => "application/x-www-form-urlencoded",
           },
-          "client_id=#{@client_id}&scope=#{URI.encode(@scope)}&client_secret=#{@client_secret}&grant_type=client_credentials"
+          params.to_s
         )
       end
 
       if response.success?
         token = Token.from_json response.body
-        TOKENS_CACHE[token_lookup] = token
+        self.class.token_cache[token_lookup] = token
         token
       else
         raise "error fetching token #{response.status} (#{response.status_code})\n#{response.body}"
       end
+    end
+
+    # https://docs.microsoft.com/en-us/graph/auth-v2-user
+    private def get_delegated_code
+      response = ConnectProxy::HTTPClient.new(LOGIN_URI) do |client|
+        params = HTTP::Params{
+          "client_id"     => @client_id,
+          "response_type" => "code",
+          "scope"         => @scope,
+        }
+        client.exec(
+          "POST",
+          "/#{@tenant}/oauth2/v2.0/token",
+          HTTP::Headers{
+            "Content-Type" => "application/x-www-form-urlencoded",
+          },
+          params.to_s
+        )
+      end
+      raise "error fetching authorisation code #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+
+      authorisation_response = Hash(String, String).from_json response.body
+      authorisation_response["code"]
     end
 
     def graph_http_request(
