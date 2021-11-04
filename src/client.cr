@@ -31,7 +31,13 @@ module Office365
 
     def get_token : Token
       existing = self.class.token_cache[token_lookup]?
-      return existing if existing && existing.current?
+      if existing
+        if !existing.current?
+          self.class.token_cache.delete(token_lookup)
+        else
+          return existing
+        end
+      end
 
       response = ConnectProxy::HTTPClient.new(LOGIN_URI) do |client|
         params = HTTP::Params{
