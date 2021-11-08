@@ -104,7 +104,7 @@ module Office365::Users
             in {Nil, Nil}                     then ""
             end
 
-    request = HTTP::Request.new("GET", path, self.default_headers)
+    request = graph_http_request("GET", path)
     response = graph_request(request)
     list_users(response)
   end

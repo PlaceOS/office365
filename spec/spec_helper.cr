@@ -88,12 +88,12 @@ module SpecHelper
   end
 
   def mock_list_users
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users?%24filter=accountEnabled+eq+true")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users?$filter=accountEnabled eq true")
       .to_return(mock_user_query.to_json)
   end
 
   def mock_list_users_with_query
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users?%24filter=%28id+in+%28%271234-5678-9012%27%2C+%271234-5678-5435%27%29%29")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users?$filter=(id in ('1234-5678-9012', '1234-5678-5435'))")
       .to_return(mock_user_query.to_json)
   end
 
@@ -111,17 +111,17 @@ module SpecHelper
   end
 
   def mock_list_group_members
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups/1234-5678-9012/members/microsoft.graph.user?%24orderby=displayName&%24top=999")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups/1234-5678-9012/members/microsoft.graph.user?$orderby=displayName&$top=999")
       .to_return(mock_user_query.to_json)
   end
 
   def mock_groups_member_of
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{mock_user.id}/transitiveMemberOf/microsoft.graph.group?%24orderby=displayName&%24top=999")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{mock_user.id}/transitiveMemberOf/microsoft.graph.group?$orderby=displayName&$top=999")
       .to_return(mock_group_query.to_json)
   end
 
   def mock_list_groups
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups?%24filter=startswith%28displayName%2C+%27query%27%29&%24top=950")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups?$filter=startswith(displayName, 'query')&$top=950")
       .to_return(mock_group_query.to_json)
   end
 
@@ -139,7 +139,7 @@ module SpecHelper
   end
 
   def mock_list_calendar_groups
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendarGroups?%24top=99")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendarGroups?$top=99")
       .to_return(mock_calendar_group_query.to_json)
   end
 
@@ -343,7 +343,7 @@ module SpecHelper
   end
 
   def mock_list_attachments
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234/attachments?%24top=100").to_return(mock_attachment_query_json)
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234/attachments?$top=100").to_return(mock_attachment_query_json)
   end
 
   def mock_create_attachment

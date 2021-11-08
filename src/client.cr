@@ -102,7 +102,9 @@ module Office365
         path = "#{path}?#{query.join('&') { |k, v| HTTP::Params.parse("#{k}=#{v}") }}"
       end
 
-      HTTP::Request.new(request_method, path, headers, data)
+      # Decode all of the encoded values that might've been accidentally or purposely encoded.
+      path = URI.decode(path)
+      HTTP::Request.new(request_method, URI.encode(path), headers, data)
     end
 
     def graph_request(http_request : HTTP::Request)
@@ -120,7 +122,7 @@ module Office365
     def default_headers
       HTTP::Headers{
         "Authorization" => "Bearer #{access_token}",
-        "Content-type"  => "application/json",
+        "Content-Type"  => "application/json",
         "Prefer"        => %(IdType="ImmutableId"),
       }
     end
