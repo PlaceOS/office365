@@ -165,9 +165,10 @@ module Office365::Calendars
     response.success? ? true : false
   end
 
-  def get_availability_request(mailbox : String, mailboxes : Array(String), starts_at : Time, ends_at : Time)
+  # default view_interval of 30mins
+  def get_availability_request(mailbox : String, mailboxes : Array(String), starts_at : Time, ends_at : Time, view_interval : Int32 = 30)
     endpoint = "#{USERS_BASE}/#{mailbox}/calendar/getSchedule"
-    data = GetAvailabilityQuery.new(mailboxes, starts_at, ends_at)
+    data = GetAvailabilityQuery.new(mailboxes, starts_at, ends_at, view_interval)
 
     graph_http_request(request_method: "POST", path: endpoint, data: data.to_json)
   end
