@@ -16,7 +16,10 @@ module Office365
     @[JSON::Field(key: "endTime", converter: Office365::DateTimeTimeZone)]
     property ends_at : Time
 
-    def initialize(@schedules, @starts_at, @ends_at)
+    @[JSON::Field(key: "availabilityViewInterval")]
+    property view_interval : Int32
+
+    def initialize(@schedules, @starts_at, @ends_at, @view_interval)
     end
   end
 end
