@@ -2,14 +2,14 @@ module Office365::Calendars
   def get_calendar_request(mailbox : String? = nil)
     query_params = {} of String => String
 
-    case mailbox
-    when nil
-      endpoint = "/v1.0/me/calendar"
-    when String
-      endpoint = "#{USERS_BASE}/#{mailbox}/calendar"
-    end
+    endpoint = case mailbox
+               in Nil
+                 "/v1.0/me/calendar"
+               in String
+                 "#{USERS_BASE}/#{mailbox}/calendar"
+               end
 
-    graph_http_request(request_method: "GET", path: endpoint.not_nil!, query: query_params)
+    graph_http_request(request_method: "GET", path: endpoint, query: query_params)
   end
 
   def get_calendar(*args, **opts)
@@ -24,10 +24,10 @@ module Office365::Calendars
   end
 
   def list_calendars_request(mailbox : String? = nil, calendar_group_id : String? = nil, match : String? = nil, search : String? = nil, limit : Int32? = nil)
-    query_params = {} of String => String
+    query_params = URI::Params.new
 
     if limit
-      query_params["$top"] = "#{limit}"
+      query_params["$top"] = limit
     end
 
     if match
@@ -62,7 +62,7 @@ module Office365::Calendars
   end
 
   def list_calendar_groups_request(mailbox : String?, limit : Int32 = 99)
-    query_params = {"$top" => "#{limit}"}
+    query_params = URI::Params{"$top" => ["#{limit}"]}
 
     case mailbox
     when nil
@@ -165,7 +165,8 @@ module Office365::Calendars
     response.success? ? true : false
   end
 
-  # default view_interval of 30mins
+  # default view_interval of 30mins, max number of mailboxes is 20 (batch for more)
+  # https://docs.microsoft.com/en-us/graph/outlook-get-free-busy-schedule
   def get_availability_request(mailbox : String, mailboxes : Array(String), starts_at : Time, ends_at : Time, view_interval : Int32 = 30)
     endpoint = "#{USERS_BASE}/#{mailbox}/calendar/getSchedule"
     data = GetAvailabilityQuery.new(mailboxes, starts_at, ends_at, view_interval)

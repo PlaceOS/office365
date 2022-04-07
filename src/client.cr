@@ -95,16 +95,17 @@ module Office365
       request_method : String,
       path : String,
       data : String? = nil,
-      query : Hash(String, String)? = nil,
+      query : URI::Params? = nil,
       headers : HTTP::Headers = default_headers
     ) : HTTP::Request
-      if query
-        path = "#{path}?#{query.join('&') { |k, v| HTTP::Params.parse("#{k}=#{v}") }}"
-      end
+      uri = if query && !query.empty?
+              "#{URI.encode_path(URI.decode(path))}?#{query}"
+            else
+              # Decode all of the encoded values that might've been accidentally or purposely encoded.
+              URI.encode_path(URI.decode(path))
+            end
 
-      # Decode all of the encoded values that might've been accidentally or purposely encoded.
-      path = URI.decode(path)
-      HTTP::Request.new(request_method, URI.encode(path), headers, data)
+      HTTP::Request.new(request_method, uri, headers, data)
     end
 
     def graph_request(http_request : HTTP::Request)
