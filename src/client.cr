@@ -104,7 +104,7 @@ module Office365
 
       # Decode all of the encoded values that might've been accidentally or purposely encoded.
       path = URI.decode(path)
-      HTTP::Request.new(request_method, URI.encode(path), headers, data)
+      HTTP::Request.new(request_method, URI.encode_path(path), headers, data)
     end
 
     def graph_request(http_request : HTTP::Request)
