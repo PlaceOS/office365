@@ -117,11 +117,16 @@ module Office365::Events
     id : String,
     mailbox : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil
+    calendar_id : String? = nil,
+    notify : Bool = true,
+    comment : String? = nil
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}/decline"
 
-    graph_http_request(request_method: "POST", path: endpoint)
+    graph_http_request(request_method: "POST", path: endpoint, data: {
+      sendResponse: notify,
+      comment:      comment,
+    }.to_json)
   end
 
   def decline_event(*args, **opts)
