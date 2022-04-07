@@ -2,14 +2,14 @@ module Office365::Calendars
   def get_calendar_request(mailbox : String? = nil)
     query_params = {} of String => String
 
-    case mailbox
-    when nil
-      endpoint = "/v1.0/me/calendar"
-    when String
-      endpoint = "#{USERS_BASE}/#{mailbox}/calendar"
-    end
+    endpoint = case mailbox
+               in Nil
+                 "/v1.0/me/calendar"
+               in String
+                 "#{USERS_BASE}/#{mailbox}/calendar"
+               end
 
-    graph_http_request(request_method: "GET", path: endpoint.not_nil!, query: query_params)
+    graph_http_request(request_method: "GET", path: endpoint, query: query_params)
   end
 
   def get_calendar(*args, **opts)

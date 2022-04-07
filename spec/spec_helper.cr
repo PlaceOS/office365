@@ -83,7 +83,7 @@ module SpecHelper
   end
 
   def mock_get_user
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{mock_user.id}")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{URI.encode_path mock_user.id}")
       .to_return(mock_user.to_json)
   end
 
@@ -106,7 +106,7 @@ module SpecHelper
   end
 
   def mock_get_group
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups/#{mock_group.id}")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups/#{URI.encode_path mock_group.id}")
       .to_return(mock_group.to_json)
   end
 
@@ -116,7 +116,7 @@ module SpecHelper
   end
 
   def mock_groups_member_of
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{mock_user.id}/transitiveMemberOf/microsoft.graph.group?$orderby=displayName&$top=999")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{URI.encode_path mock_user.id}/transitiveMemberOf/microsoft.graph.group?$orderby=displayName&$top=999")
       .to_return(mock_group_query.to_json)
   end
 
@@ -134,7 +134,7 @@ module SpecHelper
   end
 
   def mock_list_calendars
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{mock_user.mail}/calendars?")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{URI.encode_path mock_user.mail.to_s}/calendars?")
       .to_return(mock_calendar_query.to_json)
   end
 
