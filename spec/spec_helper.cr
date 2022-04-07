@@ -54,11 +54,11 @@ module SpecHelper
   end
 
   def mock_user
-    Office365::User.from_json(%({"id":"1234","mail":"foo%40bar.com","displayName":"Foo Bar","userPrincipalName":"foo%40bar.com","businessPhones":[]}))
+    Office365::User.from_json(%({"id":"1234","mail":"foo@bar.com","displayName":"Foo Bar","userPrincipalName":"foo@bar.com","businessPhones":[]}))
   end
 
   def mock_user2
-    Office365::User.from_json(%({"%40odata.context":"https://graph.microsoft.com/v1.0/$metadata#users/$entity","id":"0faa49e2-0602-41c2-8a7b-1438333c0af1","businessPhones":[],"displayName":"Adele Vance","givenName":null,"jobTitle":null,"mail":null,"mobilePhone":null,"officeLocation":null,"preferredLanguage":null,"surname":null,"userPrincipalName":"adelevancetest%40testing.onmicrosoft.com"}))
+    Office365::User.from_json(%({"@odata.context":"https://graph.microsoft.com/v1.0/$metadata#users/$entity","id":"0faa49e2-0602-41c2-8a7b-1438333c0af1","businessPhones":[],"displayName":"Adele Vance","givenName":null,"jobTitle":null,"mail":null,"mobilePhone":null,"officeLocation":null,"preferredLanguage":null,"surname":null,"userPrincipalName":"adelevancetest@testing.onmicrosoft.com"}))
   end
 
   def mock_create_user
