@@ -57,10 +57,10 @@ module Office365::Users
 
     limit = limit.to_s if limit
 
-    query_params = {
+    query_params = URI::Params.new({
       "$filter" => filter_param,
       "$top"    => limit,
-    }.compact
+    }.compact.transform_values { |val| [val] })
 
     graph_http_request("GET", "#{USERS_BASE}", query: query_params)
   end
@@ -96,15 +96,14 @@ module Office365::Users
   def list_users_by_query(query : Hash(String, String)? = nil, q : String? = nil)
     # https://graph.microsoft.com/v1.0/f50e8d54-1202-4c05-a58a-4ab4331964d2/users?$filter=id in ('5e44b9ff-b1ff-4656-8b80-6a365ff3dce1', '255bcc9c-354f-4978-8b14-75ed3f6eeb06')
 
-    path = "#{USERS_BASE}"
-    path += case {query, q}
-            in {Hash(String, String), String} then "?#{HTTP::Params.encode(query)} and #{q}"
-            in {Hash(String, String), Nil}    then "?#{HTTP::Params.encode(query)}"
-            in {Nil, String}                  then "?#{q}"
-            in {Nil, Nil}                     then ""
-            end
+    params = case {query, q}
+             in {Hash(String, String), String} then "#{HTTP::Params.encode(query)} and #{q}"
+             in {Hash(String, String), Nil}    then "#{HTTP::Params.encode(query)}"
+             in {Nil, String}                  then q
+             in {Nil, Nil}                     then ""
+             end
 
-    request = graph_http_request("GET", path)
+    request = graph_http_request("GET", USERS_BASE, query: URI::Params.parse(params))
     response = graph_request(request)
     list_users(response)
   end

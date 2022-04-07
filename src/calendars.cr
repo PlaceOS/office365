@@ -24,10 +24,10 @@ module Office365::Calendars
   end
 
   def list_calendars_request(mailbox : String? = nil, calendar_group_id : String? = nil, match : String? = nil, search : String? = nil, limit : Int32? = nil)
-    query_params = {} of String => String
+    query_params = URI::Params.new
 
     if limit
-      query_params["$top"] = "#{limit}"
+      query_params["$top"] = limit
     end
 
     if match
@@ -62,7 +62,7 @@ module Office365::Calendars
   end
 
   def list_calendar_groups_request(mailbox : String?, limit : Int32 = 99)
-    query_params = {"$top" => "#{limit}"}
+    query_params = URI::Params{"$top" => ["#{limit}"]}
 
     case mailbox
     when nil

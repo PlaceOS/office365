@@ -54,11 +54,11 @@ module SpecHelper
   end
 
   def mock_user
-    Office365::User.from_json(%({"id":"1234","mail":"foo@bar.com","displayName":"Foo Bar","userPrincipalName":"foo@bar.com","businessPhones":[]}))
+    Office365::User.from_json(%({"id":"1234","mail":"foo%40bar.com","displayName":"Foo Bar","userPrincipalName":"foo%40bar.com","businessPhones":[]}))
   end
 
   def mock_user2
-    Office365::User.from_json(%({"@odata.context":"https://graph.microsoft.com/v1.0/$metadata#users/$entity","id":"0faa49e2-0602-41c2-8a7b-1438333c0af1","businessPhones":[],"displayName":"Adele Vance","givenName":null,"jobTitle":null,"mail":null,"mobilePhone":null,"officeLocation":null,"preferredLanguage":null,"surname":null,"userPrincipalName":"adelevancetest@testing.onmicrosoft.com"}))
+    Office365::User.from_json(%({"%40odata.context":"https://graph.microsoft.com/v1.0/$metadata#users/$entity","id":"0faa49e2-0602-41c2-8a7b-1438333c0af1","businessPhones":[],"displayName":"Adele Vance","givenName":null,"jobTitle":null,"mail":null,"mobilePhone":null,"officeLocation":null,"preferredLanguage":null,"surname":null,"userPrincipalName":"adelevancetest%40testing.onmicrosoft.com"}))
   end
 
   def mock_create_user
@@ -139,7 +139,7 @@ module SpecHelper
   end
 
   def mock_list_calendar_groups
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendarGroups?$top=99")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendarGroups?$top=99")
       .to_return(mock_calendar_group_query.to_json)
   end
 
@@ -152,25 +152,25 @@ module SpecHelper
   end
 
   def mock_create_calendar
-    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendars")
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendars")
       .to_return(mock_calendar.to_json)
   end
 
   def mock_create_calendar_group
-    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendarGroups")
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendarGroups")
       .to_return(mock_calendar_group.to_json)
   end
 
   def mock_delete_calendar
-    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendars/1234").to_return(body: "")
+    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendars/1234").to_return(body: "")
   end
 
   def mock_delete_calendar_group
-    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendarGroups/1234").to_return(body: "")
+    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendarGroups/1234").to_return(body: "")
   end
 
   def mock_get_availability
-    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/getSchedule")
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/getSchedule")
       .to_return(mock_availability.to_json)
   end
 
@@ -203,7 +203,7 @@ module SpecHelper
       ends_at:         Time.local + 30.minutes,
       subject:         "My Unique Event Subject",
       rooms:           ["Red Room"],
-      attendees:       ["elon@musk.com", Office365::EmailAddress.new(address: "david@bowie.net", name: "David Bowie"), Office365::Attendee.new(email: "the@goodies.org")],
+      attendees:       ["elon%40musk.com", Office365::EmailAddress.new(address: "david%40bowie.net", name: "David Bowie"), Office365::Attendee.new(email: "the%40goodies.org")],
       response_status: Office365::ResponseStatus.new(response: Office365::ResponseStatus::Response::Organizer, time: "0001-01-01T00:00:00Z"),
     }
   end
@@ -262,8 +262,8 @@ module SpecHelper
           "id"     => 0,
           "status" => 200,
           "body"   => {
-            "@odata.context" => "https://graph.microsoft.com/v1.0/$metadata#users('7bb44254-ffeb-4040-84bb-8c2783f726e8')/calendar/calendarView",
-            "value"          => [JSON.parse(with_tz(mock_event.to_json))],
+            "%40odata.context" => "https://graph.microsoft.com/v1.0/$metadata#users('7bb44254-ffeb-4040-84bb-8c2783f726e8')/calendar/calendarView",
+            "value"            => [JSON.parse(with_tz(mock_event.to_json))],
           },
         },
         {
@@ -276,48 +276,48 @@ module SpecHelper
   end
 
   def mock_list_events
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/calendarView?startDateTime=2020-01-01T00:00:00-00:00&endDateTime=2020-06-01T00:00:00-00:00&$top=10000").to_return(mock_event_query_json)
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/calendarView?startDateTime=2020-01-01T00:00:00-00:00&endDateTime=2020-06-01T00:00:00-00:00&$top=10000").to_return(mock_event_query_json)
   end
 
   def mock_list_events_error
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/bar@foo.com/calendar/calendarView?startDateTime=2020-01-01T00:00:00-00:00&endDateTime=2020-06-01T00:00:00-00:00&$top=10000")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/bar%40foo.com/calendar/calendarView?startDateTime=2020-01-01T00:00:00-00:00&endDateTime=2020-06-01T00:00:00-00:00&$top=10000")
       .to_return(mock_event_query_json_error)
   end
 
   def mock_batch_list_events
-    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/$batch").to_return(mock_batch_event_list_json)
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/%24batch").to_return(mock_batch_event_list_json)
   end
 
   def mock_create_event
-    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events").to_return(with_tz(mock_event.to_json))
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events").to_return(with_tz(mock_event.to_json))
   end
 
   def mock_create_event_tz
-    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events").to_return(with_tz(mock_event_tz.to_json, mock_tz))
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events").to_return(with_tz(mock_event_tz.to_json, mock_tz))
   end
 
   def mock_get_event
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234").to_return(with_tz(mock_event.to_json))
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/1234").to_return(with_tz(mock_event.to_json))
   end
 
   def mock_get_event_tz
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234").to_return(with_tz(mock_event_tz.to_json, mock_tz))
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/1234").to_return(with_tz(mock_event_tz.to_json, mock_tz))
   end
 
   def mock_update_event
-    WebMock.stub(:patch, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/").to_return(with_tz(Office365::Event.new(**mock_event_data.merge(subject: "A Whole New Name!")).to_json))
+    WebMock.stub(:patch, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/").to_return(with_tz(Office365::Event.new(**mock_event_data.merge(subject: "A Whole New Name!")).to_json))
   end
 
   def mock_update_event_tz
-    WebMock.stub(:patch, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/").to_return(with_tz(Office365::Event.new(**mock_event_data_tz.merge(subject: "A Whole New Name!")).to_json, mock_tz))
+    WebMock.stub(:patch, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/").to_return(with_tz(Office365::Event.new(**mock_event_data_tz.merge(subject: "A Whole New Name!")).to_json, mock_tz))
   end
 
   def mock_delete_event
-    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234").to_return(body: "")
+    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/1234").to_return(body: "")
   end
 
   def mock_decline_event
-    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234/decline").to_return(body: "")
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/1234/decline").to_return(body: "")
   end
 
   def mock_credentials
@@ -347,19 +347,19 @@ module SpecHelper
   end
 
   def mock_list_attachments
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234/attachments?$top=100").to_return(mock_attachment_query_json)
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/1234/attachments?$top=100").to_return(mock_attachment_query_json)
   end
 
   def mock_create_attachment
-    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234/attachments").to_return(mock_attachment_data.to_json)
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/1234/attachments").to_return(mock_attachment_data.to_json)
   end
 
   def mock_get_attachment
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234/attachments/1234").to_return(mock_attachment_data.to_json)
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/1234/attachments/1234").to_return(mock_attachment_data.to_json)
   end
 
   def mock_delete_attachment
-    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo@bar.com/calendar/events/1234/attachments/1234").to_return(body: "")
+    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/1234/attachments/1234").to_return(body: "")
   end
 end
 

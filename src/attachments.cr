@@ -5,7 +5,7 @@ module Office365::Attachments
                                calendar_id : String? = nil)
     endpoint = event_attachment_path(mailbox, event_id, calendar_group_id, calendar_id)
 
-    graph_http_request(request_method: "GET", path: endpoint, query: {"$top" => "100"})
+    graph_http_request(request_method: "GET", path: endpoint, query: URI::Params{"$top" => ["100"]})
   end
 
   def list_attachments(*args, **opts)

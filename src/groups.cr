@@ -5,11 +5,11 @@ module Office365::Groups
       filter_param = "startswith(displayName, '#{q}')"
     end
 
-    query_params = {
+    query_params = URI::Params.new({
       "$filter" => filter_param,
       # doesn't support 999
       "$top" => "950",
-    }.compact
+    }.compact.transform_values { |val| [val] })
 
     # This is required to do searching
     headers = HTTP::Headers{"ConsistencyLevel" => "eventual"}
@@ -51,11 +51,11 @@ module Office365::Groups
       filter_param = %("displayName:#{q}")
     end
 
-    query_params = {
+    query_params = URI::Params.new({
       "$orderby" => "displayName",
       "$search"  => filter_param,
       "$top"     => "999",
-    }.compact
+    }.compact.transform_values { |val| [val] })
 
     # This is required to do searching
     headers = HTTP::Headers{"ConsistencyLevel" => "eventual"}
@@ -84,11 +84,11 @@ module Office365::Groups
       filter_param = %("displayName:#{q}")
     end
 
-    query_params = {
+    query_params = URI::Params.new({
       "$orderby" => "displayName",
       "$search"  => filter_param,
       "$top"     => "999",
-    }.compact
+    }.compact.transform_values { |val| [val] })
 
     # This is required to do searching
     headers = HTTP::Headers{"ConsistencyLevel" => "eventual"}

@@ -7,9 +7,9 @@ module Office365::Events
     period_end : Time? = nil,
     ical_uid : String? = nil
   )
-    endpoint = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end, ical_uid)
+    path, params = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end, ical_uid)
 
-    graph_http_request(request_method: "GET", path: endpoint)
+    graph_http_request(request_method: "GET", path: path, query: params)
   end
 
   def list_events(*args, **opts)
@@ -178,10 +178,10 @@ module Office365::Events
                  raise "unknown endpoint"
                end
 
-    ical_filter = HTTP::Params.parse(ical_uid.presence ? "$filter=iCalUId eq '#{ical_uid}'" : "").to_s
+    ical_filter = URI::Params.parse(ical_uid.presence ? "$filter=iCalUId eq '#{ical_uid}'" : "").to_s
     ical_filter = "&#{ical_filter}" unless ical_filter.empty?
-    path = "#{endpoint}?startDateTime=#{period_start.to_utc.to_s("%FT%T-00:00")}&endDateTime=#{end_period.not_nil!.to_utc.to_s("%FT%T-00:00")}#{ical_filter}"
-    path += "&$top=#{top}" unless top.nil?
-    path
+    query = "startDateTime=#{period_start.to_utc.to_s("%FT%T-00:00")}&endDateTime=#{end_period.not_nil!.to_utc.to_s("%FT%T-00:00")}#{ical_filter}"
+    query += "&$top=#{top}" unless top.nil?
+    {endpoint, URI::Params.parse(query)}
   end
 end
