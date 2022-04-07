@@ -125,4 +125,14 @@ describe Office365::Events do
       client.delete_event(id: "1234", mailbox: "foo@bar.com").should eq(true)
     end
   end
+
+  describe "#decline_event" do
+    it "suceeds when everything goes well" do
+      SpecHelper.mock_client_auth
+      SpecHelper.mock_decline_event
+
+      client = Office365::Client.new(**SpecHelper.mock_credentials)
+      client.decline_event(id: "1234", mailbox: "foo@bar.com").should eq(true)
+    end
+  end
 end

@@ -113,6 +113,28 @@ module Office365::Events
     response.success? ? true : false
   end
 
+  def decline_event_request(
+    id : String,
+    mailbox : String,
+    calendar_group_id : String? = nil,
+    calendar_id : String? = nil
+  )
+    endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}/decline"
+
+    graph_http_request(request_method: "POST", path: endpoint)
+  end
+
+  def decline_event(*args, **opts)
+    request = decline_event_request(*args, **opts)
+    response = graph_request(request)
+
+    decline_event(response)
+  end
+
+  def decline_event(response : HTTP::Client::Response)
+    response.success? ? true : false
+  end
+
   private def calendar_event_path(
     mailbox : String,
     calendar_group_id : String? = nil,

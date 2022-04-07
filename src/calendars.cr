@@ -165,7 +165,8 @@ module Office365::Calendars
     response.success? ? true : false
   end
 
-  # default view_interval of 30mins
+  # default view_interval of 30mins, max number of mailboxes is 20 (batch for more)
+  # https://docs.microsoft.com/en-us/graph/outlook-get-free-busy-schedule
   def get_availability_request(mailbox : String, mailboxes : Array(String), starts_at : Time, ends_at : Time, view_interval : Int32 = 30)
     endpoint = "#{USERS_BASE}/#{mailbox}/calendar/getSchedule"
     data = GetAvailabilityQuery.new(mailboxes, starts_at, ends_at, view_interval)
