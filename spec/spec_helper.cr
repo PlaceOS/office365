@@ -47,6 +47,13 @@ module SpecHelper
     }
   end
 
+  def mock_invite_user_request_body
+    {
+      invitedUserEmailAddress: "foo@bar.com",
+      inviteRedirectUrl: "https://spec.example.com",
+    }
+  end
+
   def mock_update_user_request_body
     {
       displayName: "Maria Valance",
@@ -61,10 +68,34 @@ module SpecHelper
     Office365::User.from_json(%({"@odata.context":"https://graph.microsoft.com/v1.0/$metadata#users/$entity","id":"0faa49e2-0602-41c2-8a7b-1438333c0af1","businessPhones":[],"displayName":"Adele Vance","givenName":null,"jobTitle":null,"mail":null,"mobilePhone":null,"officeLocation":null,"preferredLanguage":null,"surname":null,"userPrincipalName":"adelevancetest@testing.onmicrosoft.com"}))
   end
 
+  def mock_invitation
+    Office365::Invitation.from_json({
+      invitedUserDisplayName: "",
+      invitedUserEmailAddress: "foo@bar.com",
+      invitedUserMessageInfo: {
+        ccRecipients: [] of NamedTuple(emailAddress: NamedTuple(address: String, name: String)),
+        customizedMessageBody: "",
+        messageLanguage: "en-US",
+      },
+      sendInvitationMessage: false,
+      inviteRedirectUrl: "https://spec.example.com",
+      inviteRedeemUrl: "graph.ms.example.com/qwerty",
+      invitedUserType: "Guest",
+      status: "PendingAcceptance",
+      invitedUser: mock_user2,
+    }.to_json)
+  end
+
   def mock_create_user
     WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users")
       .with(body: mock_create_user_request_body.to_json)
       .to_return(body: mock_user2.to_json)
+  end
+
+  def mock_invite_user
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/invitations")
+      .with(body: mock_invite_user_request_body.to_json)
+      .to_return(body: mock_invitation.to_json)
   end
 
   def mock_update_user

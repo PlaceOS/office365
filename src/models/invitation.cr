@@ -30,5 +30,8 @@ module Office365
 
     @[JSON::Field(key: "invitedUser")]
     property user : User?
+
+    def initialize(@email : String, @redirect_url : String)
+    end
   end
 end

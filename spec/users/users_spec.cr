@@ -44,6 +44,14 @@ describe Office365::Users do
       client = Office365::Client.new(**SpecHelper.mock_credentials)
       client.create_user_from_json(SpecHelper.mock_create_user_request_body.to_json).display_name.should eq(SpecHelper.mock_create_user_request_body["displayName"])
     end
+
+    it "#invite_user_from_json" do
+      SpecHelper.mock_client_auth
+      SpecHelper.mock_invite_user
+
+      client = Office365::Client.new(**SpecHelper.mock_credentials)
+      client.invite_user_from_json(SpecHelper.mock_invite_user_request_body.to_json).email.should eq(SpecHelper.mock_invite_user_request_body["invitedUserEmailAddress"])
+    end
   end
 
   describe "update_user" do

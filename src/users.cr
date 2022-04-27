@@ -115,7 +115,7 @@ module Office365::Users
   end
 
   def invite_user_from_json(string_or_io) : Invitation
-    request = graph_http_request("POST", "#{INVITATION_BASE}", data: string_or_io)
+    request = graph_http_request("POST", "#{INVITATIONS_BASE}", data: string_or_io)
     response = graph_request(request)
 
     get_invitation(response)
