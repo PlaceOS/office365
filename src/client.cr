@@ -8,7 +8,8 @@ require "./batch_request"
 require "./odata"
 
 module Office365
-  USERS_BASE = "/v1.0/users"
+  USERS_BASE      = "/v1.0/users"
+  INVITATION_BASE = "/v1.0/invitations"
 
   class Client
     include Office365::Mail

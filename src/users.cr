@@ -109,4 +109,15 @@ module Office365::Users
     response = graph_request(request)
     list_users(response)
   end
+
+  def get_invitation(response : HTTP::Client::Response)
+    Invitation.from_json response.body
+  end
+
+  def invite_user_from_json(string_or_io) : Invitation
+    request = graph_http_request("POST", "#{INVITATION_BASE}", data: string_or_io)
+    response = graph_request(request)
+
+    get_invitation(response)
+  end
 end
