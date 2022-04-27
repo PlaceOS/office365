@@ -50,7 +50,7 @@ module SpecHelper
   def mock_invite_user_request_body
     {
       invitedUserEmailAddress: "foo@bar.com",
-      inviteRedirectUrl: "https://spec.example.com",
+      inviteRedirectUrl:       "https://spec.example.com",
     }
   end
 
@@ -70,19 +70,19 @@ module SpecHelper
 
   def mock_invitation
     Office365::Invitation.from_json({
-      invitedUserDisplayName: "",
+      invitedUserDisplayName:  "",
       invitedUserEmailAddress: "foo@bar.com",
-      invitedUserMessageInfo: {
-        ccRecipients: [] of NamedTuple(emailAddress: NamedTuple(address: String, name: String)),
+      invitedUserMessageInfo:  {
+        ccRecipients:          [] of NamedTuple(emailAddress: NamedTuple(address: String, name: String)),
         customizedMessageBody: "",
-        messageLanguage: "en-US",
+        messageLanguage:       "en-US",
       },
       sendInvitationMessage: false,
-      inviteRedirectUrl: "https://spec.example.com",
-      inviteRedeemUrl: "graph.ms.example.com/qwerty",
-      invitedUserType: "Guest",
-      status: "PendingAcceptance",
-      invitedUser: mock_user2,
+      inviteRedirectUrl:     "https://spec.example.com",
+      inviteRedeemUrl:       "graph.ms.example.com/qwerty",
+      invitedUserType:       "Guest",
+      status:                "PendingAcceptance",
+      invitedUser:           mock_user2,
     }.to_json)
   end
 
