@@ -26,8 +26,14 @@ module Office365
     DEFAULT_SCOPE = "https://graph.microsoft.com/.default"
 
     class_getter token_cache = {} of String => Token
+    @token : String? = nil
 
     def initialize(@tenant : String, @client_id : String, @client_secret : String, @scope : String = DEFAULT_SCOPE)
+    end
+
+    def initialize(token : String)
+      @token = token
+      @tenant = @client_id = @client_secret = @scope = ""
     end
 
     def get_token : Token
@@ -129,8 +135,8 @@ module Office365
       }
     end
 
-    private def access_token
-      get_token.access_token
+    private def access_token : String
+      @token || get_token.access_token
     end
 
     private def token_lookup
