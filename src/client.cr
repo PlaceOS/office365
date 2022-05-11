@@ -37,6 +37,10 @@ module Office365
     end
 
     def get_token : Token
+      if static = @token
+        return Token.new(static, "", 5.hours.total_seconds.to_i)
+      end
+
       existing = self.class.token_cache[token_lookup]?
       if existing
         if !existing.current?
