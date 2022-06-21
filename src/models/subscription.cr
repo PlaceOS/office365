@@ -74,6 +74,9 @@ module Office365
 
       @[JSON::Field(key: "clientState")]
       getter client_state : String?
+
+      @[JSON::Field(key: "subscriptionExpirationDateTime")]
+      getter expiration_date_time : Time?
     end
   end
 end

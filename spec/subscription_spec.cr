@@ -59,4 +59,13 @@ describe Office365::Subscriptions do
     client = Office365::Client.new(**SpecHelper.mock_credentials)
     client.reauthorize_subscription("1234567").should be_true
   end
+
+  it "deletes a subscription" do
+    SpecHelper.mock_client_auth
+    WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/subscriptions/1234567")
+      .to_return(body: "")
+
+    client = Office365::Client.new(**SpecHelper.mock_credentials)
+    client.delete_subscription("1234567").should be_true
+  end
 end

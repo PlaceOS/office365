@@ -66,4 +66,20 @@ module Office365::Subscriptions
   def reauthorize_subscription(response : HTTP::Client::Response)
     true
   end
+
+  def delete_subscription_request(subscription_id : String)
+    graph_http_request(
+      request_method: "DELETE",
+      path: "/v1.0/subscriptions/#{subscription_id}",
+    )
+  end
+
+  def delete_subscription(*args, **opts)
+    request = delete_subscription_request(*args, **opts)
+    reauthorize_subscription graph_request(request)
+  end
+
+  def delete_subscription(response : HTTP::Client::Response)
+    true
+  end
 end
