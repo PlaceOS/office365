@@ -5,6 +5,7 @@ require "./events"
 require "./calendars"
 require "./attachments"
 require "./batch_request"
+require "./subscriptions"
 require "./odata"
 
 module Office365
@@ -19,6 +20,7 @@ module Office365
     include Office365::Calendars
     include Office365::Attachments
     include Office365::BatchRequest
+    include Office365::Subscriptions
     include Office365::OData
 
     LOGIN_URI     = URI.parse("https://login.microsoftonline.com")
