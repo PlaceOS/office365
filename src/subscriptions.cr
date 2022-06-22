@@ -59,8 +59,7 @@ module Office365::Subscriptions
 
   def reauthorize_subscription(*args, **opts)
     request = reauthorize_subscription_request(*args, **opts)
-    response = graph_request(request)
-    reauthorize_subscription(response)
+    reauthorize_subscription graph_request(request)
   end
 
   def reauthorize_subscription(response : HTTP::Client::Response)
@@ -76,7 +75,7 @@ module Office365::Subscriptions
 
   def delete_subscription(*args, **opts)
     request = delete_subscription_request(*args, **opts)
-    reauthorize_subscription graph_request(request)
+    delete_subscription graph_request(request)
   end
 
   def delete_subscription(response : HTTP::Client::Response)
