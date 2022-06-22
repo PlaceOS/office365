@@ -59,14 +59,8 @@ module Office365
       include JSON::Serializable
       include JSON::Serializable::Unmapped
 
-      enum Event
-        Created
-        Updated
-        Deleted
-      end
-
       @[JSON::Field(key: "changeType")]
-      getter change : Event
+      getter change : Change
 
       @[JSON::Field(key: "subscriptionId")]
       getter subscription_id : String
