@@ -171,7 +171,7 @@ module Office365::Events
     calendar_id : String? = nil
   )
     # we assume we are actually after a mailbox as calendar_ids are not emails
-    if calendar_id.includes?('@')
+    if calendar_id.try &.includes?('@')
       mailbox = calendar_id
       calendar_id = nil
     end
@@ -202,7 +202,7 @@ module Office365::Events
     end_period = period_end || period_start + 6.months
 
     # we assume we are actually after a mailbox as calendar_ids are not emails
-    if calendar_id.includes?('@')
+    if calendar_id.try &.includes?('@')
       mailbox = calendar_id
       calendar_id = nil
     end
