@@ -170,6 +170,12 @@ module Office365::Events
     calendar_group_id : String? = nil,
     calendar_id : String? = nil
   )
+    # we assume we are actually after a mailbox as calendar_ids are not emails
+    if calendar_id.includes?('@')
+      mailbox = calendar_id
+      calendar_id = nil
+    end
+
     case {calendar_group_id, calendar_id}
     when {Nil, Nil}
       "#{USERS_BASE}/#{mailbox}/calendar/events"
@@ -194,6 +200,12 @@ module Office365::Events
     top : Int32? = 10000
   )
     end_period = period_end || period_start + 6.months
+
+    # we assume we are actually after a mailbox as calendar_ids are not emails
+    if calendar_id.includes?('@')
+      mailbox = calendar_id
+      calendar_id = nil
+    end
 
     endpoint = case {calendar_group_id, calendar_id}
                when {Nil, Nil}
