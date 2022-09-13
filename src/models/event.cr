@@ -166,7 +166,7 @@ module Office365
       end
 
       if @all_day
-        @starts_at = @starts_at.at_beginning_of_day
+        @starts_at = @starts_at.not_nil!.at_beginning_of_day
         if ending = @ends_at
           @ends_at = ending.at_beginning_of_day
         else
