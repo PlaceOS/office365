@@ -126,7 +126,7 @@ module Office365
       @id = nil,
       @series_master_id = nil,
       @online_meeting_provider = nil,
-      hide_attendees = false
+      @hide_attendees = false
     )
       @body = ItemBody.new(description)
       @is_online_meeting = @online_meeting_provider ? true : nil
