@@ -149,9 +149,11 @@ module Office365::Events
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}/cancel"
 
-    graph_http_request(request_method: "POST", path: endpoint, data: {
-      comment: comment,
-    }.to_json)
+    data = if comment
+             {comment: comment}.to_json
+           end
+
+    graph_http_request(request_method: "POST", path: endpoint, data: data)
   end
 
   def cancel_event(*args, **opts)
