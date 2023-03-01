@@ -60,6 +60,9 @@ module Office365
     @[JSON::Field(key: "lastModifiedDateTime")]
     property updated : Time? = nil
 
+    @[JSON::Field(key: "hideAttendees")]
+    property? hide_attendees : Bool = false
+
     @[JSON::Field(key: "iCalUId")]
     property icaluid : String?
 
