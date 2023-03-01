@@ -131,6 +131,10 @@ module Office365
       else
         raise Office365::Exception.new(response.status, response.body, response.status.description)
       end
+    rescue error : ArgumentError
+      # TODO:: remove once merged https://github.com/crystal-lang/crystal/issues/13134
+      raise error unless error.message.try(&.includes?("should not have a body"))
+      HTTP::Client::Response.new(:no_content)
     end
 
     def default_headers
