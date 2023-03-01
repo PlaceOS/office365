@@ -60,9 +60,6 @@ module Office365
     @[JSON::Field(key: "lastModifiedDateTime")]
     property updated : Time? = nil
 
-    @[JSON::Field(key: "hideAttendees")]
-    property? hide_attendees : Bool = false
-
     @[JSON::Field(key: "iCalUId")]
     property icaluid : String?
 
@@ -108,6 +105,9 @@ module Office365
     @[JSON::Field(key: "originalStartTimeZone")]
     property timezone : String = ""
 
+    @[JSON::Field(key: "hideAttendees")]
+    property? hide_attendees : Bool = false
+
     def initialize(
       @starts_at : Time = Time.local,
       @ends_at : Time | Nil = nil,
@@ -125,7 +125,8 @@ module Office365
       @all_day = false,
       @id = nil,
       @series_master_id = nil,
-      @online_meeting_provider = nil
+      @online_meeting_provider = nil,
+      hide_attendees = false
     )
       @body = ItemBody.new(description)
       @is_online_meeting = @online_meeting_provider ? true : nil
