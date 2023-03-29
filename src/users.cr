@@ -43,7 +43,7 @@ module Office365::Users
     get_user response
   end
 
-  def list_users_request(q : String? = nil, limit : Int32? = nil)
+  def list_users_request(q : String? = nil, limit : Int32? = nil, filter : String? = nil)
     if q
       queries = q.split(" ")
       filter_params = [] of String
@@ -53,6 +53,8 @@ module Office365::Users
       end
 
       filter_param = "(accountEnabled eq true) and #{filter_params.join(" and ")}"
+    elsif filter
+      filter_param = filter
     else
       filter_param = "accountEnabled eq true"
     end
