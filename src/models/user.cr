@@ -11,7 +11,7 @@ module Office365
     property business_phones : Array(String?)
 
     @[JSON::Field(key: "displayName")]
-    property display_name : String
+    property display_name : String?
 
     @[JSON::Field(key: "givenName")]
     property given_name : String?
