@@ -8,7 +8,7 @@ class Office365::PatternedRecurrence
   end
 
   def self.build(recurrence_start_date : Time, recurrence : RecurrenceParam)
-    days_of_week = recurrence.days_of_week ? [Office365::DayOfWeek.parse(recurrence.days_of_week.not_nil!)] : [Office365::DayOfWeek.parse(recurrence_start_date.to_s("%A"))]
+    days_of_week = recurrence.days_of_week.empty? ? [Office365::DayOfWeek.parse(recurrence_start_date.to_s("%A"))] : recurrence.days_of_week.map { |day| Office365::DayOfWeek.parse(day) }
     pattern = case recurrence.pattern
               when "daily"
                 RecurrencePattern.new(Office365::RecurrencePatternType::Daily, recurrence.interval)

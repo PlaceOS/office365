@@ -48,7 +48,7 @@ module Office365
     property days_of_week : Array(DayOfWeek)?
 
     @[JSON::Field(key: "firstDayOfWeek")]
-    property first_day_of_week : DayOfWeek?
+    property first_day_of_week : DayOfWeek = DayOfWeek::Sunday
 
     property index : WeekIndex?
     property interval : Int32?
