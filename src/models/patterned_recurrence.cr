@@ -13,7 +13,7 @@ class Office365::PatternedRecurrence
               when "daily"
                 RecurrencePattern.new(Office365::RecurrencePatternType::Daily, recurrence.interval)
               when "weekly"
-                RecurrencePattern.new(Office365::RecurrencePatternType::Weekly, recurrence.interval, days_of_week, recurrence.first_day_of_week)
+                RecurrencePattern.new(Office365::RecurrencePatternType::Weekly, recurrence.interval, days_of_week, recurrence.first_day_of_week || Office365::DayOfWeek::Sunday)
               when "monthly"
                 RecurrencePattern.new(Office365::RecurrencePatternType::RelativeMonthly, recurrence.interval, days_of_week)
               end
