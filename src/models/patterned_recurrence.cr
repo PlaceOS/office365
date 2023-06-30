@@ -14,8 +14,10 @@ class Office365::PatternedRecurrence
                 RecurrencePattern.new(Office365::RecurrencePatternType::Daily, recurrence.interval)
               when "weekly"
                 RecurrencePattern.new(Office365::RecurrencePatternType::Weekly, recurrence.interval, days_of_week, recurrence.first_day_of_week || Office365::DayOfWeek::Sunday)
-              when "monthly"
-                RecurrencePattern.new(Office365::RecurrencePatternType::RelativeMonthly, recurrence.interval, days_of_week)
+              when "relativeMonthly", "monthly"
+                RecurrencePattern.new(Office365::RecurrencePatternType::RelativeMonthly, recurrence.interval, days_of_week, index: recurrence.index)
+              when "absoluteMonthly"
+                RecurrencePattern.new(Office365::RecurrencePatternType::AbsoluteMonthly, recurrence.interval, day_of_month: recurrence.day_of_month)
               end
     range = RecurrenceRange.new("endDate", recurrence_start_date.to_s("%F"), recurrence.range_end.to_s("%F"))
 
