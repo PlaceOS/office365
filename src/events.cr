@@ -167,6 +167,33 @@ module Office365::Events
     response.success? ? true : false
   end
 
+  def accept_event_request(
+    id : String,
+    mailbox : String,
+    calendar_group_id : String? = nil,
+    calendar_id : String? = nil,
+    notify : Bool = true,
+    comment : String? = nil
+  )
+    endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}/accept"
+
+    graph_http_request(request_method: "POST", path: endpoint, data: {
+      sendResponse: notify,
+      comment:      comment,
+    }.to_json)
+  end
+
+  def accept_event(*args, **opts)
+    request = accept_event_request(*args, **opts)
+    response = graph_request(request)
+
+    accept_event(response)
+  end
+
+  def accept_event(response : HTTP::Client::Response)
+    response.success? ? true : false
+  end
+
   private def calendar_event_path(
     mailbox : String,
     calendar_group_id : String? = nil,
