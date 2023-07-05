@@ -351,6 +351,10 @@ module SpecHelper
     WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/1234/decline").to_return(body: "")
   end
 
+  def mock_accept_event
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/1234/accept").to_return(body: "")
+  end
+
   def mock_credentials
     {tenant: "tentant", client_id: "client_id", client_secret: "client_secret"}
   end
