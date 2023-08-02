@@ -72,6 +72,9 @@ module Office365
     @[JSON::Field(key: "isAllDay")]
     property? all_day : Bool
 
+    @[JSON::Field(key: "isCancelled")]
+    property? is_cancelled : Bool?
+
     @[JSON::Field(key: "responseStatus")]
     property response_status : ResponseStatus?
 

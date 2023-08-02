@@ -48,20 +48,14 @@ module Office365
     property days_of_week : Array(DayOfWeek)?
 
     @[JSON::Field(key: "firstDayOfWeek")]
-    property first_day_of_week : DayOfWeek?
+    property first_day_of_week : DayOfWeek = DayOfWeek::Sunday
 
     property index : WeekIndex?
     property interval : Int32?
     property month : Int32?
     property type : RecurrencePatternType?
 
-    def initialize(@type, @interval)
-    end
-
-    def initialize(@type, @interval, @days_of_week)
-    end
-
-    def initialize(@type, @interval, @days_of_week, @first_day_of_week)
+    def initialize(@type, @interval = nil, @days_of_week = nil, @first_day_of_week = DayOfWeek::Sunday, @day_of_month = nil, @index = nil, @month = nil)
     end
   end
 end
