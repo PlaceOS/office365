@@ -5,9 +5,10 @@ module Office365::Events
     calendar_id : String? = nil,
     period_start : Time = Time.local.at_beginning_of_day,
     period_end : Time? = nil,
-    ical_uid : String? = nil
+    ical_uid : String? = nil,
+    filter : String? = nil
   )
-    path, params = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end, ical_uid)
+    path, params = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end, ical_uid, filter)
 
     graph_http_request(request_method: "GET", path: path, query: params)
   end
@@ -226,7 +227,8 @@ module Office365::Events
     period_start : Time = Time.local.at_beginning_of_day,
     period_end : Time? = nil,
     ical_uid : String? = nil,
-    top : Int32? = 10000
+    top : Int32? = 10000,
+    filter : String? = nil
   )
     end_period = period_end || period_start + 6.months
 
@@ -250,6 +252,8 @@ module Office365::Events
                end
 
     ical_filter = URI::Params.parse(ical_uid.presence ? "$filter=iCalUId eq '#{ical_uid}'" : "").to_s
+    ical_filter = URI::Params.parse("$filter=#{filter}").to_s if filter.presence
+
     ical_filter = "&#{ical_filter}" unless ical_filter.empty?
     query = "startDateTime=#{period_start.to_utc.to_s("%FT%T-00:00")}&endDateTime=#{end_period.not_nil!.to_utc.to_s("%FT%T-00:00")}#{ical_filter}"
     query += "&$top=#{top}" unless top.nil?
