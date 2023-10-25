@@ -227,7 +227,7 @@ module Office365::Events
     period_start : Time = Time.local.at_beginning_of_day,
     period_end : Time? = nil,
     ical_uid : String? = nil,
-    top : Int32? = 10000,
+    top : Int32? = 999,
     filter : String? = nil
   )
     end_period = period_end || period_start + 6.months
@@ -251,12 +251,24 @@ module Office365::Events
                  raise "unknown endpoint"
                end
 
-    ical_filter = URI::Params.parse(ical_uid.presence ? "$filter=iCalUId eq '#{ical_uid}'" : "").to_s
-    ical_filter = URI::Params.parse("$filter=#{filter}").to_s if filter.presence
+    query = String.build do |str|
+      str << "startDateTime="
+      str << period_start.to_utc.to_s("%FT%T-00:00")
+      str << "&endDateTime="
+      str << end_period.not_nil!.to_utc.to_s("%FT%T-00:00")
+      if filter.presence
+        str << "&"
+        str << URI::Params.parse("$filter=#{filter}")
+      elsif ical_uid.presence
+        str << "&"
+        str << URI::Params.parse("$filter=iCalUId eq '#{ical_uid}'")
+      end
+      if top
+        str << "&$top="
+        str << top
+      end
+    end
 
-    ical_filter = "&#{ical_filter}" unless ical_filter.empty?
-    query = "startDateTime=#{period_start.to_utc.to_s("%FT%T-00:00")}&endDateTime=#{end_period.not_nil!.to_utc.to_s("%FT%T-00:00")}#{ical_filter}"
-    query += "&$top=#{top}" unless top.nil?
     {endpoint, URI::Params.parse(query)}
   end
 end

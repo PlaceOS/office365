@@ -45,7 +45,7 @@ module Office365
       @odata_type = "#microsoft.graph.fileAttachment"
       buffer = IO::Memory.new
       buf = Bytes.new(64)
-      while ((bytes = content_bytes.read(buf)) > 0)
+      while (bytes = content_bytes.read(buf)) > 0
         buffer.write(buf[0, bytes])
       end
       @content_bytes = Base64.strict_encode(buffer)
