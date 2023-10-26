@@ -6,9 +6,10 @@ module Office365::Events
     period_start : Time = Time.local.at_beginning_of_day,
     period_end : Time? = nil,
     ical_uid : String? = nil,
+    top : Int32? = 10000,
     filter : String? = nil
   )
-    path, params = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end, ical_uid, filter)
+    path, params = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end, ical_uid, top, filter)
 
     graph_http_request(request_method: "GET", path: path, query: params)
   end
@@ -227,7 +228,7 @@ module Office365::Events
     period_start : Time = Time.local.at_beginning_of_day,
     period_end : Time? = nil,
     ical_uid : String? = nil,
-    top : Int32? = 999,
+    top : Int32? = 10000,
     filter : String? = nil
   )
     end_period = period_end || period_start + 6.months
