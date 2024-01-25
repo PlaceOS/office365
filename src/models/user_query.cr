@@ -3,6 +3,9 @@ module Office365
     include JSON::Serializable
 
     property value : Array(User)
+    
+    @[JSON::Field(key: "@odata.nextLink")]
+    property next_page_token : String?
 
     def initialize(@value)
     end
