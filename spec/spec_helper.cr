@@ -307,11 +307,11 @@ module SpecHelper
   end
 
   def mock_list_events
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/calendarView?startDateTime=2020-01-01T00%3A00%3A00-00%3A00&endDateTime=2020-06-01T00%3A00%3A00-00%3A00").to_return(mock_event_query_json)
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/calendarView?startDateTime=2020-01-01T00%3A00%3A00-00%3A00&endDateTime=2020-06-01T00%3A00%3A00-00%3A00&%24top=10000").to_return(mock_event_query_json)
   end
 
   def mock_list_events_error
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/bar%40foo.com/calendar/calendarView?startDateTime=2020-01-01T00%3A00%3A00-00%3A00&endDateTime=2020-06-01T00%3A00%3A00-00%3A00")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/bar%40foo.com/calendar/calendarView?startDateTime=2020-01-01T00%3A00%3A00-00%3A00&endDateTime=2020-06-01T00%3A00%3A00-00%3A00&%24top=10000")
       .to_return(mock_event_query_json_error)
   end
 
@@ -395,6 +395,28 @@ module SpecHelper
 
   def mock_delete_attachment
     WebMock.stub(:delete, "https://graph.microsoft.com/v1.0/users/foo%40bar.com/calendar/events/1234/attachments/1234").to_return(body: "")
+  end
+
+  def mock_list_application(expiry = true)
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/applications%28appid%3D%27%7B%7B%40client_id%7D%7D%27%29?%24select=passwordCredentials")
+      .to_return(body: mock_pwd_cred_data(expiry).to_json)
+  end
+
+  def mock_pwd_cred_data(expiry = true)
+    {
+      "@odata.context":      "https://graph.microsoft.com/v1.0/$metadata#applications(passwordCredentials)/$entity",
+      "passwordCredentials": [
+        {
+          "customKeyIdentifier": nil,
+          "displayName":         "Some Name",
+          "endDateTime":         expiry ? "2025-03-12T23:44:20.176Z" : nil,
+          "hint":                "HIN",
+          "keyId":               "0002dcce-acca-41b5-94d9-60932f151eaf",
+          "secretText":          nil,
+          "startDateTime":       "2023-03-13T23:44:20.176Z",
+        },
+      ],
+    }
   end
 end
 

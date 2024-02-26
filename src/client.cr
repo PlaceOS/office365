@@ -7,6 +7,7 @@ require "./attachments"
 require "./batch_request"
 require "./subscriptions"
 require "./odata"
+require "./password_credentials"
 
 module Office365
   USERS_BASE       = "/v1.0/users"
@@ -22,6 +23,7 @@ module Office365
     include Office365::BatchRequest
     include Office365::Subscriptions
     include Office365::OData
+    include Office365::PasswordCredentials
 
     LOGIN_URI     = URI.parse("https://login.microsoftonline.com")
     GRAPH_URI     = URI.parse("https://graph.microsoft.com/")
