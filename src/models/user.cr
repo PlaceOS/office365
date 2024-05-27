@@ -35,6 +35,9 @@ module Office365
     @[JSON::Field(key: "userPrincipalName")]
     property user_principal_name : String
 
+    @[JSON::Field(key: "accountEnabled")]
+    property account_enabled : Bool?
+
     # Additional Properties (get through $select query parameter)
     property contacts : Array(Contact)?
 
