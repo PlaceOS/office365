@@ -46,7 +46,7 @@ module Office365::Users
   SELECT_FIELDS = %w(id userPrincipalName surname preferredLanguage officeLocation mobilePhone mail jobTitle givenName displayName businessPhones accountEnabled mailNickname)
 
   def list_users_request(q : String? = nil, limit : Int32? = nil, filter : String? = nil, additional_fields : Array(String)? = nil)
-    if q
+    if q && q.presence
       queries = q.split(" ")
       filter_params = [] of String
 
@@ -69,9 +69,10 @@ module Office365::Users
     end
 
     query_params = URI::Params.new({
-      "$select" => fields.join(","),
-      "$filter" => filter_param,
-      "$top"    => limit,
+      "$select"  => fields.join(","),
+      "$orderby" => "displayName",
+      "$filter"  => filter_param,
+      "$top"     => limit,
     }.compact.transform_values { |val| [val] })
 
     graph_http_request("GET", "#{USERS_BASE}", query: query_params)

@@ -46,15 +46,25 @@ module Office365::Groups
   end
 
   # https://docs.microsoft.com/en-us/graph/api/group-list-members?view=graph-rest-1.0&tabs=http
-  def list_group_members_request(group_id : String, q : String? = nil)
+  def list_group_members_request(group_id : String, q : String? = nil, limit : Int32? = nil, filter : String? = nil, additional_fields : Array(String)? = nil)
     if q.presence
       filter_param = %("displayName:#{q}")
+    elsif filter
+      filter_param = filter
+    end
+
+    limit = limit || 999
+
+    fields = Users::SELECT_FIELDS
+    if additional_fields
+      fields += additional_fields
     end
 
     query_params = URI::Params.new({
+      "$select"  => fields.join(","),
       "$orderby" => "displayName",
-      "$search"  => filter_param,
-      "$top"     => "999",
+      "$filter"  => filter_param,
+      "$top"     => limit.to_s,
     }.compact.transform_values { |val| [val] })
 
     # This is required to do searching

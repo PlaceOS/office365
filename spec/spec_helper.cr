@@ -119,7 +119,7 @@ module SpecHelper
   end
 
   def mock_list_users
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users?$select=id,userPrincipalName,surname,preferredLanguage,officeLocation,mobilePhone,mail,jobTitle,givenName,displayName,businessPhones,accountEnabled,mailNickname&$filter=accountEnabled eq true")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users?$select=id,userPrincipalName,surname,preferredLanguage,officeLocation,mobilePhone,mail,jobTitle,givenName,displayName,businessPhones,accountEnabled,mailNickname&$orderby=displayName&$filter=accountEnabled eq true")
       .to_return(mock_user_query.to_json)
   end
 
@@ -142,7 +142,7 @@ module SpecHelper
   end
 
   def mock_list_group_members
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups/1234-5678-9012/members/microsoft.graph.user?$orderby=displayName&$top=999")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/groups/1234-5678-9012/members/microsoft.graph.user?$select=id,userPrincipalName,surname,preferredLanguage,officeLocation,mobilePhone,mail,jobTitle,givenName,displayName,businessPhones,accountEnabled,mailNickname&$orderby=displayName&$top=999")
       .to_return(mock_user_query.to_json)
   end
 
