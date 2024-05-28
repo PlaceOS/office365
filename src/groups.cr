@@ -1,7 +1,9 @@
 module Office365::Groups
   # https://docs.microsoft.com/en-us/graph/api/group-list?view=graph-rest-1.0&tabs=http
-  def list_groups_request(q : String? = nil)
-    if q.presence
+  def list_groups_request(q : String? = nil, filter : String? = nil)
+    if filter.presence
+      filter_param = filter
+    elsif q.presence
       filter_param = "startswith(displayName, '#{q}')"
     end
 
