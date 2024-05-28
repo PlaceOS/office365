@@ -69,10 +69,11 @@ module Office365::Users
     end
 
     query_params = URI::Params.new({
-      "$select"  => fields.join(","),
-      "$orderby" => "displayName",
-      "$filter"  => filter_param,
-      "$top"     => limit,
+      "$select" => fields.join(","),
+      # can't use order if there is a filter
+      # "$orderby" => "displayName",
+      "$filter" => filter_param,
+      "$top"    => limit,
     }.compact.transform_values { |val| [val] })
 
     graph_http_request("GET", "#{USERS_BASE}", query: query_params)
