@@ -64,8 +64,25 @@ module SpecHelper
     Office365::User.from_json(%({"id":"1234","mail":"foo@bar.com","displayName":"Foo Bar","userPrincipalName":"foo@bar.com","businessPhones":[]}))
   end
 
+  def mock_user2_data
+    {
+      "@odata.context":    "https://graph.microsoft.com/v1.0/$metadata#users/$entity",
+      "id":                "0faa49e2-0602-41c2-8a7b-1438333c0af1",
+      "businessPhones":    [] of String,
+      "displayName":       "Adele Vance",
+      "givenName":         nil,
+      "jobTitle":          nil,
+      "mail":              nil,
+      "mobilePhone":       nil,
+      "officeLocation":    nil,
+      "preferredLanguage": nil,
+      "surname":           nil,
+      "userPrincipalName": "adelevancetest@testing.onmicrosoft.com",
+    }
+  end
+
   def mock_user2
-    Office365::User.from_json(%({"@odata.context":"https://graph.microsoft.com/v1.0/$metadata#users/$entity","id":"0faa49e2-0602-41c2-8a7b-1438333c0af1","businessPhones":[],"displayName":"Adele Vance","givenName":null,"jobTitle":null,"mail":null,"mobilePhone":null,"officeLocation":null,"preferredLanguage":null,"surname":null,"userPrincipalName":"adelevancetest@testing.onmicrosoft.com"}))
+    Office365::User.from_json(mock_user2_data.to_json)
   end
 
   def mock_invitation
@@ -414,6 +431,219 @@ module SpecHelper
           "keyId":               "0002dcce-acca-41b5-94d9-60932f151eaf",
           "secretText":          nil,
           "startDateTime":       "2023-03-13T23:44:20.176Z",
+        },
+      ],
+    }
+  end
+
+  def mock_list_room
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/places/microsoft.graph.room")
+      .to_return(body: mock_list_rooms_data.to_json)
+  end
+
+  def mock_list_room_list
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/places/microsoft.graph.roomList")
+      .to_return(body: mock_list_room_list_data.to_json)
+  end
+
+  def mock_list_rooms_data
+    {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#places/microsoft.graph.room",
+      "value":          [
+        {
+          "id":           "3162F1E1-C4C0-604B-51D8-91DA78989EB1",
+          "emailAddress": "cf100@contoso.com",
+          "displayName":  "Conf Room 100",
+          "address":      {
+            "street":          "4567 Main Street",
+            "city":            "Buffalo",
+            "state":           "NY",
+            "postalCode":      "98052",
+            "countryOrRegion": "USA",
+          },
+          "geoCoordinates": {
+            "latitude":  47.640568390488626,
+            "longitude": -122.1293731033803,
+          },
+          "phone":                  "000-000-0000",
+          "nickname":               "Conf Room",
+          "label":                  "100",
+          "capacity":               50,
+          "building":               "1",
+          "floorNumber":            1,
+          "isManaged":              true,
+          "isWheelChairAccessible": false,
+          "bookingType":            "standard",
+          "tags":                   [
+            "bean bags",
+          ],
+          "audioDeviceName": nil,
+          "videoDeviceName": nil,
+          "displayDevice":   "surface hub",
+        },
+        {
+          "id":           "3162F1E1-C4C0-604B-51D8-91DA78970B97",
+          "emailAddress": "cf200@contoso.com",
+          "displayName":  "Conf Room 200",
+          "address":      {
+            "street":          "4567 Main Street",
+            "city":            "Buffalo",
+            "state":           "NY",
+            "postalCode":      "98052",
+            "countryOrRegion": "USA",
+          },
+          "geoCoordinates": {
+            "latitude":  47.640568390488625,
+            "longitude": -122.1293731033802,
+          },
+          "phone":                  "000-000-0000",
+          "nickname":               "Conf Room",
+          "label":                  "200",
+          "capacity":               40,
+          "building":               "2",
+          "floorNumber":            2,
+          "isManaged":              true,
+          "isWheelChairAccessible": false,
+          "bookingType":            "standard",
+          "tags":                   [
+            "benches",
+            "nice view",
+          ],
+          "audioDeviceName": nil,
+          "videoDeviceName": nil,
+          "displayDevice":   "surface hub",
+        },
+      ],
+    }
+  end
+
+  def mock_list_room_list_data
+    {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#places/microsoft.graph.roomList",
+      "value":          [
+        {
+          "id":          "DC404124-302A-92AA-F98D-7B4DEB0C1705",
+          "displayName": "Building 1",
+          "address":     {
+            "street":          "4567 Main Street",
+            "city":            "Buffalo",
+            "state":           "NY",
+            "postalCode":      "98052",
+            "countryOrRegion": "USA",
+          },
+          "geocoordinates": nil,
+          "phone":          nil,
+          "emailAddress":   "bldg1@contoso.com",
+        },
+        {
+          "id":          "DC404124-302A-92AA-F98D-7B4DEB0C1706",
+          "displayName": "Building 2",
+          "address":     {
+            "street":          "4567 Main Street",
+            "city":            "Buffalo",
+            "state":           "NY",
+            "postalCode":      "98052",
+            "countryOrRegion": "USA",
+          },
+          "geocoordinates": nil,
+          "phone":          nil,
+          "emailAddress":   "bldg2@contoso.com",
+        },
+      ],
+    }
+  end
+
+  def mock_get_room
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/places/979e9793-3e91-40eb-b18c-0ea937893956")
+      .to_return(body: mock_get_room_data.to_json)
+  end
+
+  def mock_get_room_list
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/places/Building2Rooms%40contoso.com")
+      .to_return(body: mock_get_room_data.to_json)
+  end
+
+  def mock_get_room_data
+    {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#places/$entity",
+      "@odata.type":    "#microsoft.graph.roomList",
+      "id":             "979e9793-3e91-40eb-b18c-0ea937893956",
+      "displayName":    "Building 2 Rooms",
+      "address":        nil,
+      "geoCoordinates": nil,
+      "phone":          "",
+      "emailAddress":   "Building2Rooms@contoso.com",
+    }
+  end
+
+  def mock_get_room_in_room_list
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/places/Building2Rooms%40contoso.com/microsoft.graph.roomlist/rooms")
+      .to_return(body: mock_get_room_in_room_list_data.to_json)
+  end
+
+  def mock_get_room_in_room_list_data
+    {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#places('Building2Rooms%40contoso.com')/microsoft.graph.roomList/rooms",
+      "value":          [
+        {
+          "id":                     "f4119db7-9a33-4bfe-a387-4444b9e7fd54",
+          "displayName":            "Conf Room Rainier",
+          "address":                nil,
+          "geoCoordinates":         nil,
+          "phone":                  "",
+          "nickname":               "Conf Room Rainier",
+          "emailAddress":           "Rainier@contoso.com",
+          "building":               nil,
+          "floorNumber":            nil,
+          "floorLabel":             nil,
+          "label":                  nil,
+          "capacity":               nil,
+          "bookingType":            "standard",
+          "audioDeviceName":        nil,
+          "videoDeviceName":        nil,
+          "displayDeviceName":      nil,
+          "isWheelChairAccessible": false,
+          "tags":                   ["some_tag"],
+        },
+        {
+          "id":                     "42385a28-1a16-4043-8d84-07615656c4e3",
+          "displayName":            "Conf Room Hood",
+          "address":                nil,
+          "geoCoordinates":         nil,
+          "phone":                  "",
+          "nickname":               "Conf Room Hood",
+          "emailAddress":           "Hood@contoso.com",
+          "building":               nil,
+          "floorNumber":            nil,
+          "floorLabel":             nil,
+          "label":                  nil,
+          "capacity":               nil,
+          "bookingType":            "standard",
+          "audioDeviceName":        nil,
+          "videoDeviceName":        nil,
+          "displayDeviceName":      nil,
+          "isWheelChairAccessible": false,
+          "tags":                   ["some_tag"],
+        },
+        {
+          "id":                     "850ee91e-a154-4d87-928e-da04c788fd90",
+          "displayName":            "Conf Room Baker",
+          "address":                nil,
+          "geoCoordinates":         nil,
+          "phone":                  "",
+          "nickname":               "Conf Room Baker",
+          "emailAddress":           "Baker@contoso.com",
+          "building":               nil,
+          "floorNumber":            nil,
+          "floorLabel":             nil,
+          "label":                  nil,
+          "capacity":               nil,
+          "bookingType":            "standard",
+          "audioDeviceName":        nil,
+          "videoDeviceName":        nil,
+          "displayDeviceName":      nil,
+          "isWheelChairAccessible": false,
+          "tags":                   ["some_tag"],
         },
       ],
     }
