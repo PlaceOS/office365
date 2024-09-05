@@ -34,6 +34,9 @@ Implements the Microsoft Office365 Graph API for the follow
   - delete Attachment
 * Mail
   - send mail
+* Place
+  - List Places
+  - Get Place
 
 
 ## Installation
