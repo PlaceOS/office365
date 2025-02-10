@@ -6,7 +6,7 @@ module Office365::Subscriptions
     expiration_date_time : Time,
     client_state : String? = nil,
     lifecycle_notification_url : String? = nil,
-    **opts
+    **opts,
   )
     sub = Subscription.new(resource, change_types, notification_url, expiration_date_time, client_state, lifecycle_notification_url)
     graph_http_request(request_method: "POST", path: "/v1.0/subscriptions", data: sub.to_json)
@@ -25,7 +25,7 @@ module Office365::Subscriptions
   # renew a subscription
   def renew_subscription_request(
     subscription_id : String,
-    expiration_date_time : Time
+    expiration_date_time : Time,
   )
     graph_http_request(
       request_method: "PATCH",

@@ -7,7 +7,7 @@ module Office365::Events
     period_end : Time? = nil,
     ical_uid : String? = nil,
     top : Int32? = 10000,
-    filter : String? = nil
+    filter : String? = nil,
   )
     path, params = calendar_view_path(mailbox, calendar_group_id, calendar_id, period_start, period_end, ical_uid, top, filter)
 
@@ -31,7 +31,7 @@ module Office365::Events
     ends_at : Time?,
     calendar_group_id : String? = nil,
     calendar_id : String? = nil,
-    **opts
+    **opts,
   )
     event = Event.new(**opts.merge(starts_at: starts_at, ends_at: ends_at))
     endpoint = calendar_event_path(mailbox, calendar_group_id, calendar_id)
@@ -54,7 +54,7 @@ module Office365::Events
     id : String,
     mailbox : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil
+    calendar_id : String? = nil,
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}"
     graph_http_request(request_method: "GET", path: endpoint)
@@ -75,7 +75,7 @@ module Office365::Events
     event : Event,
     mailbox : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil
+    calendar_id : String? = nil,
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{event.id}"
 
@@ -97,7 +97,7 @@ module Office365::Events
     id : String,
     mailbox : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil
+    calendar_id : String? = nil,
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}"
 
@@ -121,7 +121,7 @@ module Office365::Events
     calendar_group_id : String? = nil,
     calendar_id : String? = nil,
     notify : Bool = true,
-    comment : String? = nil
+    comment : String? = nil,
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}/decline"
 
@@ -147,7 +147,7 @@ module Office365::Events
     mailbox : String,
     calendar_group_id : String? = nil,
     calendar_id : String? = nil,
-    comment : String? = nil
+    comment : String? = nil,
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}/cancel"
 
@@ -175,7 +175,7 @@ module Office365::Events
     calendar_group_id : String? = nil,
     calendar_id : String? = nil,
     notify : Bool = true,
-    comment : String? = nil
+    comment : String? = nil,
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{id}/accept"
 
@@ -199,7 +199,7 @@ module Office365::Events
   private def calendar_event_path(
     mailbox : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil
+    calendar_id : String? = nil,
   )
     # we assume we are actually after a mailbox as calendar_ids are not emails
     if calendar_id.try &.includes?('@')
@@ -229,7 +229,7 @@ module Office365::Events
     period_end : Time? = nil,
     ical_uid : String? = nil,
     top : Int32? = 10000,
-    filter : String? = nil
+    filter : String? = nil,
   )
     end_period = period_end || period_start + 6.months
 

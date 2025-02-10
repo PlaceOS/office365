@@ -648,6 +648,71 @@ module SpecHelper
       ],
     }
   end
+
+  def mock_list_channel_msgs
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/teams/fbe2bf47-16c8-47cf-b4a5-4b9b187c508b/channels/19%3A4a95f7d8db4c4e7fae857bcebe0623e6%40thread.tacv2/messages?%24top=3")
+      .to_return(body: mock_list_channel_messages)
+  end
+
+  def mock_list_channel_messages
+    File.read("spec/chat_messages/messages.json")
+  end
+
+  def mock_get_channel_msg
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/teams/fbe2bf47-16c8-47cf-b4a5-4b9b187c508b/channels/19%3A4a95f7d8db4c4e7fae857bcebe0623e6%40thread.tacv2/messages/1614618259349")
+      .to_return(body: mock_get_channel_message)
+  end
+
+  def mock_get_channel_message
+    %(
+{
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#chats('19%3A8ea0e38b-efb3-4757-924a-5f94061cf8c2_97f62344-57dc-409c-88ad-c4af14158ff5%40unq.gbl.spaces')/messages/$entity",
+    "id": "1612289992105",
+    "replyToId": null,
+    "etag": "1612289992105",
+    "messageType": "message",
+    "createdDateTime": "2021-02-02T18:19:52.105Z",
+    "lastModifiedDateTime": "2021-02-02T18:19:52.105Z",
+    "lastEditedDateTime": null,
+    "deletedDateTime": null,
+    "subject": null,
+    "summary": null,
+    "chatId": "19:8ea0e38b-efb3-4757-924a-5f94061cf8c2_97f62344-57dc-409c-88ad-c4af14158ff5@unq.gbl.spaces",
+    "importance": "normal",
+    "locale": "en-us",
+    "webUrl": null,
+    "channelIdentity": null,
+    "policyViolation": null,
+    "eventDetail": null,
+    "from": {
+        "application": null,
+        "device": null,
+        "conversation": null,
+        "user": {
+            "@odata.type": "#microsoft.graph.teamworkUserIdentity",
+            "id": "8ea0e38b-efb3-4757-924a-5f94061cf8c2",
+            "displayName": "Robin Kline",
+            "userIdentityType": "aadUser",
+            "tenantId": "e61ef81e-8bd8-476a-92e8-4a62f8426fca"
+        }
+    },
+    "body": {
+        "contentType": "text",
+        "content": "test"
+    },
+    "attachments": [],
+    "mentions": [],
+    "reactions": [],
+    "messageHistory": []
+}
+    )
+  end
+
+  def mock_channel_send_msg
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/teams/fbe2bf47-16c8-47cf-b4a5-4b9b187c508b/channels/19%3A4a95f7d8db4c4e7fae857bcebe0623e6%40thread.tacv2/messages")
+      .with(body: "{\"body\":{\"content\":\"Hello World\",\"contentType\":\"TEXT\"}}", headers: {"Authorization" => "Bearer access_token", "Content-Type" => "application/json", "Prefer" => "IdType=\"ImmutableId\""})
+      .to_return(status: 201, body: "")
+  end
 end
 
 Spec.before_each do

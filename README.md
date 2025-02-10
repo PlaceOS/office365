@@ -37,6 +37,10 @@ Implements the Microsoft Office365 Graph API for the follow
 * Place
   - List Places
   - Get Place
+* Teams
+  - List channel messages
+  - Get channel message
+  - Send channel message
 
 
 ## Installation

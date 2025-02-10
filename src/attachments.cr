@@ -29,7 +29,7 @@ module Office365::Attachments
     name : String,
     content_bytes : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil
+    calendar_id : String? = nil,
   )
     attachment = Attachment.new(name, content_bytes)
     endpoint = event_attachment_path(mailbox, event_id, calendar_group_id, calendar_id)
@@ -57,7 +57,7 @@ module Office365::Attachments
     mailbox : String,
     event_id : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil
+    calendar_id : String? = nil,
   )
     endpoint = "#{event_attachment_path(mailbox, event_id, calendar_group_id, calendar_id)}/#{id}"
     graph_http_request(request_method: "GET", path: endpoint)
@@ -83,7 +83,7 @@ module Office365::Attachments
     mailbox : String,
     event_id : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil
+    calendar_id : String? = nil,
   )
     endpoint = "#{event_attachment_path(mailbox, event_id, calendar_group_id, calendar_id)}/#{id}"
 
@@ -109,7 +109,7 @@ module Office365::Attachments
     mailbox : String,
     event_id : String,
     calendar_group_id : String? = nil,
-    calendar_id : String? = nil
+    calendar_id : String? = nil,
   )
     endpoint = ""
 
