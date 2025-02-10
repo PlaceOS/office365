@@ -55,7 +55,7 @@ module Office365
       cc : Array(String) | Array(EmailAddress) | Nil = nil,
       bcc : Array(String) | Array(EmailAddress) | Nil = nil,
       @body_preview = nil,
-      @attachments = nil
+      @attachments = nil,
     )
       @body = Body.new(content, content_type)
       @to = to_recipient(to)

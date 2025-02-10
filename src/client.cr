@@ -9,6 +9,7 @@ require "./subscriptions"
 require "./odata"
 require "./password_credentials"
 require "./places"
+require "./channel_messages"
 
 module Office365
   USERS_BASE       = "/v1.0/users"
@@ -27,6 +28,7 @@ module Office365
     include Office365::OData
     include Office365::PasswordCredentials
     include Office365::Places
+    include Office365::ChannelMessages
 
     LOGIN_URI     = URI.parse("https://login.microsoftonline.com")
     GRAPH_URI     = URI.parse("https://graph.microsoft.com/")
@@ -114,7 +116,7 @@ module Office365
       path : String,
       data : String? = nil,
       query : URI::Params? = nil,
-      headers : HTTP::Headers = default_headers
+      headers : HTTP::Headers = default_headers,
     ) : HTTP::Request
       uri = if query && !query.empty?
               "#{URI.encode_path(URI.decode(path))}?#{query}"
