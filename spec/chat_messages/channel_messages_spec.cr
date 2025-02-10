@@ -1,7 +1,7 @@
 require "../spec_helper"
 
 describe Office365::Places do
-  describe "list_messages", focus: true do
+  describe "list_messages" do
     it "list_messages should return the list of messages in channel" do
       SpecHelper.mock_client_auth
       SpecHelper.mock_list_channel_msgs
