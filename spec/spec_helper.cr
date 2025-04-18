@@ -725,7 +725,8 @@ module SpecHelper
   end
 
   def mock_applications_add_pwd
-    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/applications/my-app/addPassword")
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/applications%28appId%3D%27my-app%27%29/addPassword")
+      .with(body: "{\"passwordCredential\":{\"displayName\":\"Password friendly name\"}}", headers: {"Authorization" => "Bearer access_token", "Content-Type" => "application/json", "Prefer" => "IdType=\"ImmutableId\""})
       .to_return(body: mock_application_add_pwd_resp)
   end
 
