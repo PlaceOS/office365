@@ -710,8 +710,150 @@ module SpecHelper
 
   def mock_channel_send_msg
     WebMock.stub(:post, "https://graph.microsoft.com/v1.0/teams/fbe2bf47-16c8-47cf-b4a5-4b9b187c508b/channels/19%3A4a95f7d8db4c4e7fae857bcebe0623e6%40thread.tacv2/messages")
-      .with(body: "{\"body\":{\"content\":\"Hello World\",\"contentType\":\"TEXT\"}}", headers: {"Authorization" => "Bearer access_token", "Content-Type" => "application/json", "Prefer" => "IdType=\"ImmutableId\""})
-      .to_return(status: 201, body: "")
+      .with(body: "{\"body\":{\"content\":\"test\",\"contentType\":\"TEXT\"}}", headers: {"Authorization" => "Bearer access_token", "Content-Type" => "application/json", "Prefer" => "IdType=\"ImmutableId\""})
+      .to_return(status: 201, body: mock_get_channel_message)
+  end
+
+  def mock_list_applications
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/applications")
+      .to_return(body: mock_list_applications_resp)
+  end
+
+  def mock_create_applications
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/applications")
+      .to_return(body: mock_create_application_resp)
+  end
+
+  def mock_applications_add_pwd
+    WebMock.stub(:post, "https://graph.microsoft.com/v1.0/applications/my-app/addPassword")
+      .to_return(body: mock_application_add_pwd_resp)
+  end
+
+  def mock_get_application_id_and_web
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/applications%28appId%3D%27my-app%27%29?%24select=id%2Cweb")
+      .to_return(body: mock_get_app_id_and_web_resp)
+  end
+
+  def mock_list_applications_resp
+    %(
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#applications",
+  "value": [
+    {
+      "appId": "00000000-0000-0000-0000-000000000000",
+      "identifierUris": [ "http://contoso/" ],
+      "displayName": "My app",
+      "publisherDomain": "contoso.com",
+      "signInAudience": "AzureADMyOrg"
+    }
+  ]
+}
+    )
+  end
+
+  def mock_create_application_resp
+    %(
+{
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#applications/$entity",
+    "id": "03ef14b0-ca33-4840-8f4f-d6e91916010e",
+    "deletedDateTime": null,
+    "isFallbackPublicClient": null,
+    "appId": "631a96bc-a705-4eda-9f99-fdaf9f54f6a2",
+    "applicationTemplateId": null,
+    "identifierUris": [],
+    "createdDateTime": "2019-09-17T19:10:35.2742618Z",
+    "displayName": "Display name",
+    "isDeviceOnlyAuthSupported": null,
+    "groupMembershipClaims": null,
+    "optionalClaims": null,
+    "addIns": [],
+    "publisherDomain": "contoso.com",
+    "samlMetadataUrl": "https://graph.microsoft.com/2h5hjaj542de/app",
+    "signInAudience": "AzureADandPersonalMicrosoftAccount",
+    "tags": [],
+    "tokenEncryptionKeyId": null,
+    "api": {
+        "requestedAccessTokenVersion": 2,
+        "acceptMappedClaims": null,
+        "knownClientApplications": [],
+        "oauth2PermissionScopes": [],
+        "preAuthorizedApplications": []
+    },
+    "appRoles": [],
+    "publicClient": {
+        "redirectUris": []
+    },
+    "info": {
+        "termsOfServiceUrl": null,
+        "supportUrl": null,
+        "privacyStatementUrl": null,
+        "marketingUrl": null,
+        "logoUrl": null
+    },
+    "keyCredentials": [],
+    "parentalControlSettings": {
+        "countriesBlockedForMinors": [],
+        "legalAgeGroupRule": "Allow"
+    },
+    "passwordCredentials": [],
+    "requiredResourceAccess": [],
+    "web": {
+        "redirectUris": [],
+        "homePageUrl": null,
+        "logoutUrl": null,
+        "implicitGrantSettings": {
+            "enableIdTokenIssuance": false,
+            "enableAccessTokenIssuance": false
+        }
+    }
+}
+
+)
+  end
+
+  def mock_application_add_pwd_resp
+    %(
+{
+    "customKeyIdentifier": null,
+    "endDateTime": "2021-09-09T19:50:29.3086381Z",
+    "keyId": "f0b0b335-1d71-4883-8f98-567911bfdca6",
+    "startDateTime": "2019-09-09T19:50:29.3086381Z",
+    "secretText": "[6gyXA5S20@MN+WRXAJ]I-TO7g1:h2P8",
+    "hint": "[6g",
+    "displayName": "Password friendly name"
+}
+)
+  end
+
+  def mock_get_app_id_and_web_resp
+    %(
+{
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#applications(id,web)/$entity",
+  "id": "870cf357-927e-4d71-9f81-6ca278227636",
+  "web": {
+    "homePageUrl": null,
+    "logoutUrl": "https://localhost/auth/logout",
+    "redirectUris": [
+      "https://example.com",
+      "https://mydomain.com/auth/login"
+    ],
+    "implicitGrantSettings": {
+      "enableAccessTokenIssuance": false,
+      "enableIdTokenIssuance": false
+    },
+    "redirectUriSettings": [
+      {
+        "uri": "https:/localhost:8843",
+        "index": null
+      },
+      {
+        "uri": "https://localhost:8843/auth/login",
+        "index": null
+      }
+    ]
+  }
+}
+)
   end
 end
 
