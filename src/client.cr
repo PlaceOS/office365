@@ -10,6 +10,7 @@ require "./odata"
 require "./password_credentials"
 require "./places"
 require "./channel_messages"
+require "./applications"
 
 module Office365
   USERS_BASE       = "/v1.0/users"
@@ -29,6 +30,7 @@ module Office365
     include Office365::PasswordCredentials
     include Office365::Places
     include Office365::ChannelMessages
+    include Office365::Applications
 
     LOGIN_URI     = URI.parse("https://login.microsoftonline.com")
     GRAPH_URI     = URI.parse("https://graph.microsoft.com/")
@@ -166,6 +168,7 @@ module Office365
     property http_body : String
 
     def initialize(@http_status, @http_body, @message = nil)
+      super("#{@http_status} #{@message} reason: #{@http_body}")
     end
   end
 end

@@ -41,6 +41,16 @@ Implements the Microsoft Office365 Graph API for the follow
   - List channel messages
   - Get channel message
   - Send channel message
+* Application
+  - List Applications
+  - Get Application
+  - Create Application
+  - Update Application
+  - Delete Application
+  - Application Add Password
+  - Application Add/Get Service Principal
+  - Application API Permissions grant Oauth2AdminGrant
+  - Application API Permissions grant admin consent
 
 
 ## Installation

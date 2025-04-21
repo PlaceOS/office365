@@ -38,8 +38,8 @@ describe Office365::Places do
       channel_id = "19:4a95f7d8db4c4e7fae857bcebe0623e6@thread.tacv2"
       client = Office365::Client.new(**SpecHelper.mock_credentials)
 
-      resp = client.send_channel_message(team_id, channel_id, "Hello World")
-      resp.status_code.should eq(201)
+      resp = client.send_channel_message(team_id, channel_id, "test")
+      resp.body.content.should eq("test")
     end
   end
 end
