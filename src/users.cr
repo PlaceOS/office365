@@ -1,6 +1,22 @@
 module Office365::Users
-  def get_user_request(id : String)
-    graph_http_request(request_method: "GET", path: "#{USERS_BASE}/#{id}")
+  def self.build_select_param(additional_fields : Array(String)? = nil)
+    fields = SELECT_FIELDS
+    if additional_fields
+      fields += additional_fields
+    end
+    fields.join(",")
+  end
+
+  @[AlwaysInline]
+  protected def build_select_param(additional_fields : Array(String)? = nil)
+    Users.build_select_param(additional_fields)
+  end
+
+  def get_user_request(id : String, additional_fields : Array(String)? = nil, **opts)
+    query_params = URI::Params.new({
+      "$select" => build_select_param(additional_fields),
+    }.compact.transform_values { |val| [val] })
+    graph_http_request(request_method: "GET", path: "#{USERS_BASE}/#{id}", query: query_params)
   end
 
   def get_user(*args, **opts)
@@ -12,8 +28,9 @@ module Office365::Users
     User.from_json response.body
   end
 
-  def get_user_by_mail_request(email : String)
+  def get_user_by_mail_request(email : String, additional_fields : Array(String)? = nil, **opts)
     query_params = URI::Params.new({
+      "$select" => build_select_param(additional_fields),
       "$filter" => "(mail eq '#{email}') or (userPrincipalName eq '#{email}')",
     }.compact.transform_values { |val| [val] })
 
@@ -63,13 +80,8 @@ module Office365::Users
 
     limit = limit.to_s if limit
 
-    fields = SELECT_FIELDS
-    if additional_fields
-      fields += additional_fields
-    end
-
     query_params = URI::Params.new({
-      "$select" => fields.join(","),
+      "$select" => build_select_param(additional_fields),
       # can't use order if there is a filter
       # "$orderby" => "displayName",
       "$filter" => filter_param,

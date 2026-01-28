@@ -57,13 +57,8 @@ module Office365::Groups
 
     limit = limit || 999
 
-    fields = Users::SELECT_FIELDS
-    if additional_fields
-      fields += additional_fields
-    end
-
     query_params = URI::Params.new({
-      "$select"  => fields.join(","),
+      "$select"  => Users.build_select_param(additional_fields),
       "$orderby" => "displayName",
       "$filter"  => filter_param,
       "$top"     => limit.to_s,

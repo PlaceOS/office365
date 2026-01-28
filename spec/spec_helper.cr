@@ -131,7 +131,7 @@ module SpecHelper
   end
 
   def mock_get_user
-    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{URI.encode_path mock_user.id}")
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{URI.encode_path mock_user.id}?%24select=id%2CuserPrincipalName%2Csurname%2CpreferredLanguage%2CofficeLocation%2CmobilePhone%2Cmail%2CjobTitle%2CgivenName%2CdisplayName%2CbusinessPhones%2CaccountEnabled%2CmailNickname")
       .to_return(mock_user.to_json)
   end
 
