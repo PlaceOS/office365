@@ -184,4 +184,15 @@ module Office365::Calendars
   def get_availability(response : HTTP::Client::Response)
     AvailabilityQuery.from_json(response.body).value
   end
+
+  def list_calendar_permissions_request(mailbox : String)
+    endpoint = "#{USERS_BASE}/#{mailbox}/calendar/calendarPermissions"
+    graph_http_request(request_method: "GET", path: endpoint)
+  end
+
+  def list_calendar_permissions(mailbox : String)
+    request = list_calendar_permissions_request(mailbox)
+    response = graph_request(request)
+    CalendarPermissionQuery.from_json(response.body)
+  end
 end
