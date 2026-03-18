@@ -82,4 +82,34 @@ describe Office365::Calendars do
       availability.first.calendar.should eq("foo@bar.com")
     end
   end
+
+  describe "#list_calendar_permissions" do
+    it "succeeds when user has delegated access" do
+      SpecHelper.mock_client_auth
+      SpecHelper.mock_list_calendar_permissions("foo@bar.com")
+
+      client = Office365::Client.new(**SpecHelper.mock_credentials)
+      permissions = client.list_calendar_permissions(mailbox: "foo@bar.com")
+
+      permissions.value.size.should eq(2)
+
+      delegate = permissions.value.first
+      delegate.role.should eq("delegateWithoutPrivateEventAccess")
+      delegate.email_address.address.should eq("delegate@bar.com")
+      delegate.is_removable.should be_true
+      delegate.is_inside_organization.should be_true
+    end
+
+    it "returns only organization when user has no access" do
+      SpecHelper.mock_client_auth
+      SpecHelper.mock_list_calendar_permissions_no_access("john@bar.com")
+
+      client = Office365::Client.new(**SpecHelper.mock_credentials)
+      permissions = client.list_calendar_permissions(mailbox: "john@bar.com")
+
+      permissions.value.size.should eq(1)
+      permissions.value.first.email_address.name.should eq("My Organization")
+      permissions.value.first.role.should eq("freeBusyRead")
+    end
+  end
 end

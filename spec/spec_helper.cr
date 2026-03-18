@@ -245,6 +245,81 @@ module SpecHelper
     }
   end
 
+  def mock_list_calendar_permissions(mailbox : String)
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{URI.encode_path mailbox}/calendar/calendarPermissions")
+      .to_return(mock_calendar_permissions_data.to_json)
+  end
+
+  def mock_list_calendar_permissions_no_access(mailbox : String)
+    WebMock.stub(:get, "https://graph.microsoft.com/v1.0/users/#{URI.encode_path mailbox}/calendar/calendarPermissions")
+      .to_return(mock_calendar_permissions_no_access_data.to_json)
+  end
+
+  def mock_calendar_permissions_data
+    {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('foo%40bar.com')/calendar/calendarPermissions",
+      "value":          [
+        {
+          "id":           "RGVsZWdhdGVk",
+          "role":         "delegateWithoutPrivateEventAccess",
+          "allowedRoles": [
+            "freeBusyRead",
+            "limitedRead",
+            "read",
+            "write",
+            "delegateWithoutPrivateEventAccess",
+          ],
+          "isRemovable":          true,
+          "isInsideOrganization": true,
+          "emailAddress":         {
+            "name":    "Delegate User",
+            "address": "delegate@bar.com",
+          },
+        },
+        {
+          "id":           "T3JnYW5pemF0aW9u",
+          "role":         "freeBusyRead",
+          "allowedRoles": [
+            "freeBusyRead",
+            "limitedRead",
+            "read",
+            "write",
+          ],
+          "isRemovable":          false,
+          "isInsideOrganization": true,
+          "emailAddress":         {
+            "name":    "My Organization",
+            "address": "",
+          },
+        },
+      ],
+    }
+  end
+
+  def mock_calendar_permissions_no_access_data
+    {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users('john%40bar.com')/calendar/calendarPermissions",
+      "value":          [
+        {
+          "id":           "T3JnYW5pemF0aW9u",
+          "role":         "freeBusyRead",
+          "allowedRoles": [
+            "freeBusyRead",
+            "limitedRead",
+            "read",
+            "write",
+          ],
+          "isRemovable":          false,
+          "isInsideOrganization": true,
+          "emailAddress":         {
+            "name":    "My Organization",
+            "address": "",
+          },
+        },
+      ],
+    }
+  end
+
   def mock_event_data
     {
       starts_at:       Time.local,
