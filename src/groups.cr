@@ -48,7 +48,15 @@ module Office365::Groups
   end
 
   # https://docs.microsoft.com/en-us/graph/api/group-list-members?view=graph-rest-1.0&tabs=http
-  def list_group_members_request(group_id : String, q : String? = nil, limit : Int32? = nil, filter : String? = nil, additional_fields : Array(String)? = nil)
+  # https://learn.microsoft.com/en-us/graph/api/group-list-transitivemembers?view=graph-rest-1.0&tabs=http
+  def list_group_members_request(
+    group_id : String,
+    q : String? = nil,
+    limit : Int32? = nil,
+    filter : String? = nil,
+    additional_fields : Array(String)? = nil,
+    transitive : Bool? = nil,
+  )
     if q.presence
       filter_param = %("displayName:#{q}")
     elsif filter
@@ -68,9 +76,11 @@ module Office365::Groups
     headers = HTTP::Headers{"ConsistencyLevel" => "eventual"}
     headers.merge! default_headers
 
+    members = transitive ? "transitiveMembers" : "members"
+
     graph_http_request(
       request_method: "GET",
-      path: "/v1.0/groups/#{group_id}/members/microsoft.graph.user",
+      path: "/v1.0/groups/#{group_id}/#{members}/microsoft.graph.user",
       query: query_params,
       headers: headers
     )
