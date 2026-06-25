@@ -76,10 +76,17 @@ module Office365::Events
     mailbox : String,
     calendar_group_id : String? = nil,
     calendar_id : String? = nil,
+    notify_existing_attendees : Bool = true,
   )
     endpoint = "#{calendar_event_path(mailbox, calendar_group_id, calendar_id)}/#{event.id}"
 
-    graph_http_request(request_method: "PATCH", path: endpoint, data: event.to_json)
+    # When the request body contains only the attendees property, Graph sends a
+    # meeting update to just the attendees that have changed (i.e. the newly
+    # added ones). Including any other property notifies all attendees.
+    # https://learn.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0
+    data = notify_existing_attendees ? event.to_json : {attendees: event.attendees}.to_json
+
+    graph_http_request(request_method: "PATCH", path: endpoint, data: data)
   end
 
   def update_event(*args, **opts)

@@ -101,6 +101,36 @@ describe Office365::Events do
     end
   end
 
+  describe "#update_event_request" do
+    it "sends the full event body by default (notifies all attendees)" do
+      client = Office365::Client.new("a_token")
+      event = SpecHelper.mock_event
+      event.id = "1234"
+      event.subject = "A Whole New Name!"
+
+      request = client.update_event_request(event: event, mailbox: "foo@bar.com")
+      body = JSON.parse(request.body.not_nil!).as_h
+
+      body["subject"].should eq("A Whole New Name!")
+      body.has_key?("attendees").should be_true
+    end
+
+    it "sends only the attendees property when notify_existing_attendees is false" do
+      client = Office365::Client.new("a_token")
+      event = SpecHelper.mock_event
+      event.id = "1234"
+      event.subject = "A Whole New Name!"
+
+      request = client.update_event_request(event: event, mailbox: "foo@bar.com", notify_existing_attendees: false)
+      body = JSON.parse(request.body.not_nil!).as_h
+
+      # Only the attendees property should be present so Graph notifies the
+      # changed (newly added) attendees only.
+      body.keys.should eq(["attendees"])
+      body["attendees"].as_a.size.should eq(event.attendees.size)
+    end
+  end
+
   describe "#update_event with tz" do
     it "suceeds when everything goes well" do
       SpecHelper.mock_client_auth
